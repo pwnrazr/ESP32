@@ -1,6 +1,6 @@
 My room ambient lighting control
 
-Uses ESP32, WS2812B leds
+Uses ESP32, WS2812B leds and a server running Mosquitto MQTT and Node RED
 
 Arduino IDE settings:
 
