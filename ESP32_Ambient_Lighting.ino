@@ -23,8 +23,10 @@ int lastdoorState = 1;     // previous state of the button
 unsigned int ledR = 0;  //For RGB
 unsigned int ledG = 0;
 unsigned int ledB = 0;
+unsigned int curBrightness = 0;
 
 bool rgbReady = false;
+bool haveSetBrightness = false;
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -59,7 +61,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if(payloadstr == "1")
     {
-       FastLED.setBrightness(BRIGHTNESS);
+      if(haveSetBrightness == false)  // for setting continuity
+      {
+        FastLED.setBrightness(BRIGHTNESS);
+      }
+      else
+      {
+        FastLED.setBrightness(curBrightness);
+      }
     }
     else if(payloadstr == "0")
     {
@@ -68,7 +77,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
   else if(topicstr == "esp32/brightness")
   {
-    FastLED.setBrightness(payloadstr.toInt());
+    haveSetBrightness = true;
+    curBrightness = payloadstr.toInt();
+    FastLED.setBrightness(curBrightness);
   }
   else if(topicstr == "esp32/R")
   {

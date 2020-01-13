@@ -41,7 +41,7 @@ void WiFiEvent(WiFiEvent_t event) {
     case SYSTEM_EVENT_STA_DISCONNECTED:
         Serial.println("WiFi lost connection");
         xTimerStop(mqttReconnectTimer, 0); // ensure we don't reconnect to MQTT while reconnecting to Wi-Fi
-    xTimerStart(wifiReconnectTimer, 0);
+        xTimerStart(wifiReconnectTimer, 0);
         break;
     }
 }
@@ -58,6 +58,8 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/R", 2);
   mqttClient.subscribe("esp32/G", 2);
   mqttClient.subscribe("esp32/B", 2);
+
+  mqttClient.publish("esp32/boot", 0, true, "0");
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
