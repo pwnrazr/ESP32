@@ -19,6 +19,8 @@ AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 
+bool haveRun = false;
+
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -59,7 +61,11 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/G", 2);
   mqttClient.subscribe("esp32/B", 2);
 
-  mqttClient.publish("esp32/boot", 0, true, "0");
+  if(haveRun == false)  // Run only once
+  {
+    mqttClient.publish("esp32/boot", 0, true, "0");
+    haveRun = true;
+  }
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
