@@ -18,6 +18,10 @@ bool beeping = false;
 int doorState = 1;         // current state of the button
 int lastdoorState = 1;     // previous state of the button
 
+unsigned int ledR = 0;  //For RGB
+unsigned int ledG = 0;
+unsigned int ledB = 0;
+
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
   Serial.print("  topic: ");
@@ -25,7 +29,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   String topicstr;
   String payloadstr;
-  
+
   for (int i = 0; i < len; i++) 
   {
     payloadstr = String(payloadstr + (char)payload[i]);  //convert payload to string
@@ -61,6 +65,23 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   else if(topicstr == "esp32/brightness")
   {
     FastLED.setBrightness(payloadstr.toInt());
+  }
+  else if(topicstr == "esp32/R")
+  {
+    ledR = payloadstr.toInt();
+  }
+  else if(topicstr == "esp32/G")
+  {
+    ledG = payloadstr.toInt();
+  }
+  else if(topicstr == "esp32/B")
+  {
+    ledB = payloadstr.toInt();
+    for(int i = 0; i < NUM_LEDS; i++) 
+  {
+    leds[i].setRGB(ledR, ledG, ledB);
+  }
+  FastLEDshowESP32();
   }
 }
 
