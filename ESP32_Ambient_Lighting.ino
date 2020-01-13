@@ -8,15 +8,25 @@
 
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
+unsigned long previousMillisLED = 0;
 
 const long interval1 = 100; // Beep timer
 const long interval2 = 250; // Door switch polling
+const long intervalLED = 17; // LED update speed (ms)
 
 unsigned int beep = 0;
 bool beeping = false;
 
 int doorState = 1;         // current state of the button
 int lastdoorState = 1;     // previous state of the button
+
+unsigned int ledR = 0;  //For RGB
+unsigned int ledG = 0;
+unsigned int ledB = 0;
+unsigned int curBrightness = 0;
+
+bool rgbReady = false;
+bool haveSetBrightness = false;
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -25,7 +35,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   String topicstr;
   String payloadstr;
-  
+
   for (int i = 0; i < len; i++) 
   {
     payloadstr = String(payloadstr + (char)payload[i]);  //convert payload to string
@@ -51,12 +61,38 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if(payloadstr == "1")
     {
-       FastLED.setBrightness(BRIGHTNESS);
+      if(haveSetBrightness == false)  // for setting continuity
+      {
+        FastLED.setBrightness(BRIGHTNESS);
+      }
+      else
+      {
+        FastLED.setBrightness(curBrightness);
+      }
     }
     else if(payloadstr == "0")
     {
        FastLED.setBrightness(0);
     }
+  }
+  else if(topicstr == "esp32/brightness")
+  {
+    haveSetBrightness = true;
+    curBrightness = payloadstr.toInt();
+    FastLED.setBrightness(curBrightness);
+  }
+  else if(topicstr == "esp32/R")
+  {
+    ledR = payloadstr.toInt();
+  }
+  else if(topicstr == "esp32/G")
+  {
+    ledG = payloadstr.toInt();
+  }
+  else if(topicstr == "esp32/B")
+  {
+    ledB = payloadstr.toInt();
+    rgbReady = true;
   }
 }
 
@@ -136,5 +172,21 @@ void loop()
       }
   }
     lastdoorState = doorState;
+  }
+
+  // LED update
+  if (currentMillis - previousMillisLED >= intervalLED) 
+  {
+    previousMillisLED = currentMillis;
+
+    if(rgbReady == true)
+    {
+      for(int i = 0; i < NUM_LEDS; i++) 
+    {
+      leds[i].setRGB(ledR, ledG, ledB); //Set colors
+    }
+    FastLEDshowESP32(); //update LED
+    rgbReady = false;
+    }
   }
 }

@@ -72,7 +72,7 @@ void FastLEDshowTask(void *pvParameters)
 
 void ledsetup() {
   //delay(500); // 3 second delay for recovery
-  Serial.begin(115200);
+  //Serial.begin(115200); //uncomment to enable debugging
   
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
@@ -88,9 +88,9 @@ void ledsetup() {
   // -- Create the FastLED show task
   xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
   
-  for(int i = 0; i < NUM_LEDS; i++)
+  for(int i = 0; i < NUM_LEDS; i++) //on startup set all LEDs to white then turn off
   {
-    leds[i].setRGB(255, 0, 255);
+    leds[i].setRGB(255, 255, 255);
   }
   FastLEDshowESP32();
   FastLED.setBrightness(0);
