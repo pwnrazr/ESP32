@@ -63,7 +63,7 @@ void onMqttConnect(bool sessionPresent) {
 
   if(haveRun == false)  // Run only once
   {
-    mqttClient.publish("esp32/boot", 0, true, "0");
+    mqttClient.publish("esp32/bootESP", 0, false, "ESP32 hard reset");  //  make sure to set retain to FALSE else it messes up deployment in nodered
     haveRun = true;
   }
 }
