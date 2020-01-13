@@ -13,3 +13,4 @@ Flash Size: "4MB (32Mb)"/n
 Partition Scheme: "Default 4MB with spiffs (1.2MB APP/1.5MB SPIFFS)"/n
 Core Debug Level: "None"/n
 PSRAM: "Disabled"
+
