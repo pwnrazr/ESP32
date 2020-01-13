@@ -8,9 +8,11 @@
 
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
+unsigned long previousMillisLED = 0;
 
 const long interval1 = 100; // Beep timer
 const long interval2 = 250; // Door switch polling
+const long intervalLED = 17; // LED update speed (ms)
 
 unsigned int beep = 0;
 bool beeping = false;
@@ -21,6 +23,8 @@ int lastdoorState = 1;     // previous state of the button
 unsigned int ledR = 0;  //For RGB
 unsigned int ledG = 0;
 unsigned int ledB = 0;
+
+bool rgbReady = false;
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -77,11 +81,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   else if(topicstr == "esp32/B")
   {
     ledB = payloadstr.toInt();
-    for(int i = 0; i < NUM_LEDS; i++) 
-  {
-    leds[i].setRGB(ledR, ledG, ledB);
-  }
-  FastLEDshowESP32();
+    rgbReady = true;
   }
 }
 
@@ -161,5 +161,21 @@ void loop()
       }
   }
     lastdoorState = doorState;
+  }
+
+  // LED update
+  if (currentMillis - previousMillisLED >= intervalLED) 
+  {
+    previousMillisLED = currentMillis;
+
+    if(rgbReady == true)
+    {
+      for(int i = 0; i < NUM_LEDS; i++) 
+    {
+      leds[i].setRGB(ledR, ledG, ledB); //Set colors
+    }
+    FastLEDshowESP32(); //update LED
+    rgbReady = false;
+    }
   }
 }
