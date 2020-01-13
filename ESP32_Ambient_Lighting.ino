@@ -3,12 +3,13 @@
 */
 
 #include "led.h"
+#include "mqtt.h"
 #include <WiFi.h>
 extern "C" {
 	#include "freertos/FreeRTOS.h"
 	#include "freertos/timers.h"
 }
-#include <AsyncMqttClient.h>
+//#include <AsyncMqttClient.h>
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <ArduinoOTA.h>
@@ -16,12 +17,6 @@ extern "C" {
 #define WIFI_SSID "Ayam Goreng"
 #define WIFI_PASSWORD "pwnrazr1234"
 
-#define MQTT_HOST IPAddress(192, 168, 1, 184)
-#define MQTT_PORT 1883
-#define MQTT_USER "pwnrazr"
-#define MQTT_PASS "pwnrazr123"
-
-AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 
@@ -42,11 +37,6 @@ void connectToWifi() {
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
 
-void connectToMqtt() {
-  Serial.println("Connecting to MQTT...");
-  mqttClient.connect();
-}
-
 void WiFiEvent(WiFiEvent_t event) {
     Serial.printf("[WiFi-event] event: %d\n", event);
     switch(event) {
@@ -64,36 +54,12 @@ void WiFiEvent(WiFiEvent_t event) {
     }
 }
 
-void onMqttConnect(bool sessionPresent) {
-  Serial.println("Connected to MQTT.");
-  Serial.print("Session present: ");
-  Serial.println(sessionPresent);
-
-  mqttClient.subscribe("esp32/beepamount", 2);
-  mqttClient.subscribe("esp32/forcestopbeep", 2);
-  mqttClient.subscribe("esp32/led", 2);
-}
-
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   Serial.println("Disconnected from MQTT.");
 
   if (WiFi.isConnected()) {
     xTimerStart(mqttReconnectTimer, 0);
   }
-}
-
-void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.println("Subscribe acknowledged.");
-  Serial.print("  packetId: ");
-  Serial.println(packetId);
-  Serial.print("  qos: ");
-  Serial.println(qos);
-}
-
-void onMqttUnsubscribe(uint16_t packetId) {
-  Serial.println("Unsubscribe acknowledged.");
-  Serial.print("  packetId: ");
-  Serial.println(packetId);
 }
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
@@ -136,12 +102,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
        FastLED.setBrightness(0);
     }
   }
-}
-
-void onMqttPublish(uint16_t packetId) {
-  Serial.println("Publish acknowledged.");
-  Serial.print("  packetId: ");
-  Serial.println(packetId);
 }
 
 void setup() {
