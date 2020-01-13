@@ -54,6 +54,10 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/beepamount", 2);
   mqttClient.subscribe("esp32/forcestopbeep", 2);
   mqttClient.subscribe("esp32/led", 2);
+  mqttClient.subscribe("esp32/brightness", 2);
+  mqttClient.subscribe("esp32/R", 2);
+  mqttClient.subscribe("esp32/G", 2);
+  mqttClient.subscribe("esp32/B", 2);
 }
 
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {

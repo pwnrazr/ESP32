@@ -58,6 +58,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
        FastLED.setBrightness(0);
     }
   }
+  else if(topicstr == "esp32/brightness")
+  {
+    FastLED.setBrightness(payloadstr.toInt());
+  }
 }
 
 void setup() {
