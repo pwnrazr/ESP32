@@ -62,8 +62,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
 void setup() {
   //Serial.begin(115200); //uncomment to enable debugging
-  Serial.println();
-  Serial.println();
 
   pinMode(32, INPUT_PULLUP);  // Set pin 32 where door switch is connected to as Input and pulled-up with internal resistors
 
