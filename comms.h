@@ -60,7 +60,9 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/R", 2);
   mqttClient.subscribe("esp32/G", 2);
   mqttClient.subscribe("esp32/B", 2);
-
+  mqttClient.subscribe("esp32/alert", 2);
+  mqttClient.subscribe("esp32/beepFreq", 2);
+  
   if(haveRun == false)  // Run only once
   {
     mqttClient.publish("esp32/bootESP", 0, false, "ESP32 hard reset");  //  make sure to set retain to FALSE else it messes up deployment in nodered
