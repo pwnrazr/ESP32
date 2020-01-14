@@ -114,6 +114,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     beepFreq = payloadstr.toInt();
   }
+  else if(topicstr == "esp32/reboot") //exposes reboot function
+  {
+    ESP.restart();
+  }
 }
 
 void setup() {
