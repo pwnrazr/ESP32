@@ -49,6 +49,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   if(topicstr == "esp32/beepamount")
   {
+    beep = 0; //stops beeping first to prevent nonstop beeping
+    ledcWriteTone(0,0);
+    beeping = false;
     beep = payloadstr.toInt();
   }
   else if(topicstr == "esp32/forcestopbeep")
