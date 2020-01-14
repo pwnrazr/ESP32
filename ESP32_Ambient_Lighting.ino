@@ -26,7 +26,6 @@ unsigned int ledB = 0;
 unsigned int curBrightness = 255;
 
 bool rgbReady = false;
-bool haveSetBrightness = false;
 bool ledUser = false; // to determine if led is turned on by user or by door response and current status of led
 bool pendingBrightness = false; // to determine whether to update brightness or not
 
@@ -63,12 +62,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if(payloadstr == "1") //on
     {
-      if(haveSetBrightness == false)  // for setting continuity
-      {
-        FastLED.setBrightness(BRIGHTNESS);
-        ledUser = true;
-      }
-      else
       {
         FastLED.setBrightness(curBrightness);
         ledUser = true;
@@ -82,10 +75,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
   else if(topicstr == "esp32/brightness")
   {
-    haveSetBrightness = true;
     curBrightness = payloadstr.toInt();
     pendingBrightness = true;
-    //FastLED.setBrightness(curBrightness);
   }
   else if(topicstr == "esp32/R")
   {
