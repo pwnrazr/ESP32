@@ -27,6 +27,8 @@ unsigned int curBrightness = 0;
 
 bool rgbReady = false;
 bool haveSetBrightness = false;
+bool ledUser = false; // to determine if led is turned on by user or by door response and current status of led
+bool pendingBrightness = false; // to determine whether to update brightness or not
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -59,27 +61,31 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
   else if(topicstr == "esp32/led")
   {
-    if(payloadstr == "1")
+    if(payloadstr == "1") //on
     {
       if(haveSetBrightness == false)  // for setting continuity
       {
         FastLED.setBrightness(BRIGHTNESS);
+        ledUser = true;
       }
       else
       {
         FastLED.setBrightness(curBrightness);
+        ledUser = true;
       }
     }
-    else if(payloadstr == "0")
+    else if(payloadstr == "0")  //off
     {
        FastLED.setBrightness(0);
+       ledUser = false;
     }
   }
   else if(topicstr == "esp32/brightness")
   {
     haveSetBrightness = true;
     curBrightness = payloadstr.toInt();
-    FastLED.setBrightness(curBrightness);
+    pendingBrightness = true;
+    //FastLED.setBrightness(curBrightness);
   }
   else if(topicstr == "esp32/R")
   {
@@ -93,6 +99,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     ledB = payloadstr.toInt();
     rgbReady = true;
+  }
+  else if(topicstr == "esp32/alert")
+  {
+    
   }
 }
 
@@ -178,13 +188,20 @@ void loop()
   if (currentMillis - previousMillisLED >= intervalLED) 
   {
     previousMillisLED = currentMillis;
-
+    
+    if(pendingBrightness == true && ledUser == true)  //only set brightness when led is turned on
+    {
+      FastLED.setBrightness(curBrightness);
+      pendingBrightness == false;
+    }
+    
     if(rgbReady == true)
     {
       for(int i = 0; i < NUM_LEDS; i++) 
     {
       leds[i].setRGB(ledR, ledG, ledB); //Set colors
     }
+
     FastLEDshowESP32(); //update LED
     rgbReady = false;
     }
