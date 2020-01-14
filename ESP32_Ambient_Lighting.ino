@@ -23,7 +23,7 @@ int lastdoorState = 1;     // previous state of the button
 unsigned int ledR = 0;  //For RGB
 unsigned int ledG = 0;
 unsigned int ledB = 0;
-unsigned int curBrightness = 0;
+unsigned int curBrightness = 255;
 
 bool rgbReady = false;
 bool haveSetBrightness = false;
@@ -100,9 +100,20 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledB = payloadstr.toInt();
     rgbReady = true;
   }
-  else if(topicstr == "esp32/alert")
+  else if(topicstr == "esp32/alert")  // on door state function
   {
-    
+    //mqttClient.publish("esp32/debug", 0, false, "received alert");
+    if(ledUser == false) // only run if leds are turned off
+    {
+      if(payloadstr == "1") // on
+      {
+        FastLED.setBrightness(curBrightness);
+      }
+      else if(payloadstr == "0")  // off
+      {
+        FastLED.setBrightness(0);
+      }
+    }
   }
 }
 
