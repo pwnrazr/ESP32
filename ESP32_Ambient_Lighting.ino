@@ -94,7 +94,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledB = payloadstr.toInt();
     rgbReady = true;
   }
-  else if(topicstr == "esp32/
 }
 
 void setup() {
@@ -162,13 +161,13 @@ void loop()
       if (doorState == LOW) 
       {
         Serial.println("DoorState LOW");
-        mqttClient.publish("esp32/doorState", 0, false, "0");
+        mqttClient.publish("esp32/doorState", 0, true, "0");
         //beep = 1;
       }
       else 
       {
         Serial.println("DoorState HIGH");
-        mqttClient.publish("esp32/doorState", 0, false, "1");
+        mqttClient.publish("esp32/doorState", 0, true, "1");
         //beep = 2;
       }
   }
