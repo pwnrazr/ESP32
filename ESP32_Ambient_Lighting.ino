@@ -15,6 +15,7 @@ const long interval2 = 250; // Door switch polling
 const long intervalLED = 17; // LED update speed (ms)
 
 unsigned int beep = 0;
+unsigned int beepFreq = 5000; //default beep frequency is 5000hz
 bool beeping = false;
 
 int doorState = 1;         // current state of the button
@@ -109,6 +110,10 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       }
     }
   }
+  else if(topicstr == "esp32/beepFreq") //exposes beep frequency to user
+  {
+    beepFreq = payloadstr.toInt();
+  }
 }
 
 void setup() {
@@ -151,7 +156,7 @@ void loop()
     {
       Serial.println("Beep!");
       Serial.println(beep);
-      ledcWriteTone(0,5000);
+      ledcWriteTone(0,beepFreq);
       beeping = true;
     }
     else if(beep != 0 && beeping == true)
