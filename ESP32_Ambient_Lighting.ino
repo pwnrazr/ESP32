@@ -220,4 +220,16 @@ void loop()
     rgbReady = false;
     }
   }
+
+  if(currentMillis > 4094967296)
+  {
+    char tempchar[40];
+
+    snprintf (tempchar, 40, "ESP32 auto reboot on millis: %lu", (int)currentMillis);  // convert string to char array
+    
+    mqttClient.publish("esp32/warn", 0, false, tempchar); //publish to topic and tempchar as payload
+    
+    delay(1000);
+    ESP.restart();
+  }
 }
