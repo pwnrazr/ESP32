@@ -55,13 +55,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     beeping = false;
     beep = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/forcestopbeep")
-  {
-    beep = 0;
-    ledcWriteTone(0,0);
-    beeping = false;
-    Serial.println("Beep force stopped");
-  }
   else if(topicstr == "esp32/led")
   {
     if(payloadstr == "1") //on
