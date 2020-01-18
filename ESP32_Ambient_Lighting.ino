@@ -112,6 +112,25 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     ESP.restart();
   }
+  else if(topicstr == "esp32/reqstat")  // Request statistics function
+  {
+    unsigned long REQ_STAT_CUR_MILLIS = millis(); // gets current millis
+    
+    char REQ_STAT_CUR_TEMPCHAR[60];
+    
+    snprintf(
+      REQ_STAT_CUR_TEMPCHAR,
+      60, 
+      "%d.%d.%d.%d,%lu", 
+      WiFi.localIP()[0], 
+      WiFi.localIP()[1],
+      WiFi.localIP()[2], 
+      WiFi.localIP()[3],
+      (int)REQ_STAT_CUR_MILLIS
+    );  // convert string to char array for Millis. Elegance courtesy of Shahmi Technosparks
+    
+    mqttClient.publish("esp32/curstat", 0, false, REQ_STAT_CUR_TEMPCHAR); //publish to topic and tempchar as payload
+  }
   /* END PROCESSING PAYLOAD AND TOPIC */
 }
 
