@@ -62,6 +62,7 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/B", 2);
   mqttClient.subscribe("esp32/alert", 2);
   mqttClient.subscribe("esp32/beepFreq", 2);
+  mqttClient.subscribe("esp32/reboot", 2);
   
   if(haveRun == false)  // Run only once
   {

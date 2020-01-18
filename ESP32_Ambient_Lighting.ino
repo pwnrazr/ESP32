@@ -47,22 +47,16 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     topicstr = String(topicstr + (char)topic[i]);  //convert topic to string
   }
-
-  if(topicstr == "esp32/beepamount")
+  
+  /* BEGIN PROCESSING PAYLOAD AND TOPIC */
+  if(topicstr == "esp32/beepamount")  // Call for beeping
   {
     beep = 0; //stops beeping first to prevent nonstop beeping
     ledcWriteTone(0,0);
     beeping = false;
     beep = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/forcestopbeep")
-  {
-    beep = 0;
-    ledcWriteTone(0,0);
-    beeping = false;
-    Serial.println("Beep force stopped");
-  }
-  else if(topicstr == "esp32/led")
+  else if(topicstr == "esp32/led")  // Call for on/off LED
   {
     if(payloadstr == "1") //on
     {
@@ -77,27 +71,27 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
        ledUser = false;
     }
   }
-  else if(topicstr == "esp32/brightness")
+  else if(topicstr == "esp32/brightness") // Call for brightness setting of LED
   {
     curBrightness = payloadstr.toInt();
     pendingBrightness = true;
   }
-  else if(topicstr == "esp32/R")
+  else if(topicstr == "esp32/R")  // Call for RGB
   {
     ledR = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/G")
+  else if(topicstr == "esp32/G")  // Call for RGB
   {
     ledG = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/B")
+  else if(topicstr == "esp32/B")  // Call for RGB
   {
     ledB = payloadstr.toInt();
     rgbReady = true;
   }
-  else if(topicstr == "esp32/alert")  // on door state function
+  else if(topicstr == "esp32/alert")  // Call for door alert function
   {
-    //mqttClient.publish("esp32/debug", 0, false, "received alert");
+    //mqttClient.publish("esp32/debug", 0, false, "received alert");  // Use when debugging
     if(ledUser == false) // only run if leds are turned off
     {
       if(payloadstr == "1") // on
@@ -110,10 +104,15 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       }
     }
   }
-  else if(topicstr == "esp32/beepFreq") //exposes beep frequency to user
+  else if(topicstr == "esp32/beepFreq") // Exposes beep frequency to user
   {
     beepFreq = payloadstr.toInt();
   }
+  else if(topicstr == "esp32/reboot") // Exposes reboot function
+  {
+    ESP.restart();
+  }
+  /* END PROCESSING PAYLOAD AND TOPIC */
 }
 
 void setup() {
@@ -147,7 +146,7 @@ void loop()
   
   unsigned long currentMillis = millis();
 
-  // Beep function
+  /* BEGIN BEEP FUNCTION */
   if (currentMillis - previousMillis1 >= interval1) 
   {
     previousMillis1 = currentMillis;
@@ -168,8 +167,9 @@ void loop()
       beep--;
     }
   }
+  /* END BEEP FUNCTION */
 
-  // doorswitch polling
+  /* BEGIN DOORSWITCH POLLING */
   if (currentMillis - previousMillis2 >= interval2) 
   {
     previousMillis2 = currentMillis;
@@ -193,8 +193,9 @@ void loop()
   }
     lastdoorState = doorState;
   }
+  /* END DOORSWITCH POLLING */
 
-  // LED update
+  /* BEGIN LED REFRESH */
   if (currentMillis - previousMillisLED >= intervalLED) 
   {
     previousMillisLED = currentMillis;
@@ -205,7 +206,7 @@ void loop()
       pendingBrightness == false;
     }
     
-    if(rgbReady == true)
+    if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
     {
       for(int i = 0; i < NUM_LEDS; i++) 
     {
@@ -216,4 +217,19 @@ void loop()
     rgbReady = false;
     }
   }
+  /* END LED REFRESH */
+
+  /* BEGIN AUTO RESTART FUNCTION */
+  if(currentMillis > 4094967296)
+  {
+    char tempchar[40];
+
+    snprintf (tempchar, 40, "ESP32 auto reboot on millis: %lu", (int)currentMillis);  // convert string to char array
+    
+    mqttClient.publish("esp32/warn", 0, false, tempchar); //publish to topic and tempchar as payload
+    
+    delay(1000);
+    ESP.restart();
+  }
+  /* END AUTO RESTART FUNCTION */
 }
