@@ -47,7 +47,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     topicstr = String(topicstr + (char)topic[i]);  //convert topic to string
   }
-
+  
+  /* BEGIN PROCESSING PAYLOAD AND TOPIC */
   if(topicstr == "esp32/beepamount")
   {
     beep = 0; //stops beeping first to prevent nonstop beeping
@@ -111,6 +112,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     ESP.restart();
   }
+  /* END PROCESSING PAYLOAD AND TOPIC */
 }
 
 void setup() {
@@ -144,7 +146,7 @@ void loop()
   
   unsigned long currentMillis = millis();
 
-  // Beep function
+  /* BEGIN BEEP FUNCTION */
   if (currentMillis - previousMillis1 >= interval1) 
   {
     previousMillis1 = currentMillis;
@@ -165,8 +167,9 @@ void loop()
       beep--;
     }
   }
+  /* END BEEP FUNCTION */
 
-  // doorswitch polling
+  /* BEGIN DOORSWITCH POLLING */
   if (currentMillis - previousMillis2 >= interval2) 
   {
     previousMillis2 = currentMillis;
@@ -190,8 +193,9 @@ void loop()
   }
     lastdoorState = doorState;
   }
+  /* END DOORSWITCH POLLING */
 
-  // LED update
+  /* BEGIN LED REFRESH */
   if (currentMillis - previousMillisLED >= intervalLED) 
   {
     previousMillisLED = currentMillis;
@@ -213,7 +217,9 @@ void loop()
     rgbReady = false;
     }
   }
+  /* END LED REFRESH */
 
+  /* BEGIN AUTO RESTART FUNCTION */
   if(currentMillis > 4094967296)
   {
     char tempchar[40];
@@ -225,4 +231,5 @@ void loop()
     delay(1000);
     ESP.restart();
   }
+  /* END AUTO RESTART FUNCTION */
 }
