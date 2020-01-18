@@ -206,7 +206,7 @@ void loop()
       pendingBrightness == false;
     }
     
-    if(rgbReady == true)
+    if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
     {
       for(int i = 0; i < NUM_LEDS; i++) 
     {
