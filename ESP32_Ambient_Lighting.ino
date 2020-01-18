@@ -49,14 +49,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
   
   /* BEGIN PROCESSING PAYLOAD AND TOPIC */
-  if(topicstr == "esp32/beepamount")
+  if(topicstr == "esp32/beepamount")  // Call for beeping
   {
     beep = 0; //stops beeping first to prevent nonstop beeping
     ledcWriteTone(0,0);
     beeping = false;
     beep = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/led")
+  else if(topicstr == "esp32/led")  // Call for on/off LED
   {
     if(payloadstr == "1") //on
     {
@@ -71,27 +71,27 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
        ledUser = false;
     }
   }
-  else if(topicstr == "esp32/brightness")
+  else if(topicstr == "esp32/brightness") // Call for brightness setting of LED
   {
     curBrightness = payloadstr.toInt();
     pendingBrightness = true;
   }
-  else if(topicstr == "esp32/R")
+  else if(topicstr == "esp32/R")  // Call for RGB
   {
     ledR = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/G")
+  else if(topicstr == "esp32/G")  // Call for RGB
   {
     ledG = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/B")
+  else if(topicstr == "esp32/B")  // Call for RGB
   {
     ledB = payloadstr.toInt();
     rgbReady = true;
   }
-  else if(topicstr == "esp32/alert")  // on door state function
+  else if(topicstr == "esp32/alert")  // Call for door alert function
   {
-    //mqttClient.publish("esp32/debug", 0, false, "received alert");
+    //mqttClient.publish("esp32/debug", 0, false, "received alert");  // Use when debugging
     if(ledUser == false) // only run if leds are turned off
     {
       if(payloadstr == "1") // on
@@ -104,11 +104,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       }
     }
   }
-  else if(topicstr == "esp32/beepFreq") //exposes beep frequency to user
+  else if(topicstr == "esp32/beepFreq") // Exposes beep frequency to user
   {
     beepFreq = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/reboot") //exposes reboot function
+  else if(topicstr == "esp32/reboot") // Exposes reboot function
   {
     ESP.restart();
   }
