@@ -64,6 +64,19 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/beepFreq", 2);
   mqttClient.subscribe("esp32/reboot", 2);
   mqttClient.subscribe("esp32/reqstat", 2);
+
+  char CUR_IP[20];
+    snprintf(
+      CUR_IP,
+      20, 
+      "%d.%d.%d.%d", 
+      WiFi.localIP()[0], 
+      WiFi.localIP()[1],
+      WiFi.localIP()[2], 
+      WiFi.localIP()[3]
+    );  // convert string to char array
+    
+  mqttClient.publish("esp32/connect", 0, false, CUR_IP);  // Publish IP on connect
   
   if(haveRun == false)  // Run only once
   {
