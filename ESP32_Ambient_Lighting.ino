@@ -172,15 +172,11 @@ void loop()
 
     if(beep > 0 && beeping == false)
     {
-      Serial.println("Beep!");
-      Serial.println(beep);
       ledcWriteTone(0,beepFreq);
       beeping = true;
     }
     else if(beep != 0 && beeping == true)
     {
-      Serial.println("Off Beep");
-      Serial.println(beep);
       ledcWriteTone(0,0);
       beeping = false;
       beep--;
@@ -201,13 +197,11 @@ void loop()
       {
         Serial.println("DoorState LOW");
         mqttClient.publish("esp32/doorState", 0, false, "0");
-        //beep = 1;
       }
       else 
       {
         Serial.println("DoorState HIGH");
         mqttClient.publish("esp32/doorState", 0, false, "1");
-        //beep = 2;
       }
   }
     lastdoorState = doorState;
