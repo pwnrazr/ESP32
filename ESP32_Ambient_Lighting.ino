@@ -27,10 +27,12 @@ unsigned int ledR = 0;  //For RGB
 unsigned int ledG = 0;
 unsigned int ledB = 0;
 unsigned int curBrightness = 255;
+unsigned int LED_MODE = 1;  // 1 for usual solid color RGB
 
 bool rgbReady = false;
 bool ledUser = false; // to determine if led is turned on by user or by door response and current status of led
 bool pendingBrightness = false; // to determine whether to update brightness or not
+bool SET_LED = false; // whether to set RGB values after changing modes
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -133,6 +135,13 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     
     mqttClient.publish("esp32/curstat", 0, false, REQ_STAT_CUR_TEMPCHAR); //publish to topic and tempchar as payload
   }
+  else if(topicstr == "/esp32/mode")
+  {
+    LED_MODE = payloadstr.toInt();
+    if(LED_MODE == 1){
+      SET_LED = true;
+    }
+  }
   /* END PROCESSING PAYLOAD AND TOPIC */
 }
 
@@ -220,16 +229,33 @@ void loop()
       FastLED.setBrightness(curBrightness);
       pendingBrightness == false;
     }
-    
-    if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
+    switch(LED_MODE)
     {
-      for(int i = 0; i < NUM_LEDS; i++) 
-    {
-      leds[i].setRGB(ledR, ledG, ledB); //Set colors
-    }
+      case 1:
+        if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
+        {
+          for(int i = 0; i < NUM_LEDS; i++) 
+        {
+          leds[i].setRGB(ledR, ledG, ledB); //Set colors
+        }
+        FastLEDshowESP32(); //update LED
+        rgbReady = false;
+        }
 
-    FastLEDshowESP32(); //update LED
-    rgbReady = false;
+        if(SET_LED == true) // Set LED colors to last set RGB values
+        {
+          for(int i = 0; i < NUM_LEDS; i++) 
+        {
+          leds[i].setRGB(ledR, ledG, ledB); //Set colors
+        }
+        FastLEDshowESP32(); //update LED
+        SET_LED = false;
+        }
+        break;
+      case 2:
+        Fire2012();
+        FastLEDshowESP32(); //update LED
+        break;
     }
   }
   /* END LED REFRESH */
