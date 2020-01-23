@@ -9,10 +9,12 @@
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
 unsigned long previousMillisLED = 0;
+unsigned long PREV_MILLIS_HEARTBEAT = 0;
 
 const long interval1 = 100; // Beep timer
 const long interval2 = 250; // Door switch polling
 const long intervalLED = 17; // LED update speed (ms)
+const long INTERVAL_HEARTBEAT = 15000;  // Heartbeat every 15 secs
 
 unsigned int beep = 0;
 unsigned int beepFreq = 5000; //default beep frequency is 5000hz
@@ -231,6 +233,14 @@ void loop()
     }
   }
   /* END LED REFRESH */
+
+  /* BEGIN HEARTBEAT */
+  if (currentMillis - PREV_MILLIS_HEARTBEAT >= INTERVAL_HEARTBEAT) 
+  {
+    PREV_MILLIS_HEARTBEAT = currentMillis;
+    mqttClient.publish("/esp32/heartbeat", 0, false, "esp32 heartbeat");
+  }
+  /* END HEARTBEAT */
 
   /* BEGIN AUTO RESTART FUNCTION */
   if(currentMillis > 4094967296)
