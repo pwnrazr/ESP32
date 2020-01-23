@@ -256,6 +256,10 @@ void loop()
         Fire2012();
         FastLEDshowESP32(); //update LED
         break;
+      case 3:
+        rainbow();
+        FastLEDshowESP32(); //update LED
+        break;
     }
   }
   /* END LED REFRESH */
