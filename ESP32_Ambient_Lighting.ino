@@ -9,10 +9,12 @@
 unsigned long previousMillis1 = 0;
 unsigned long previousMillis2 = 0;
 unsigned long previousMillisLED = 0;
+unsigned long PREV_MILLIS_HEARTBEAT = 0;
 
 const long interval1 = 100; // Beep timer
 const long interval2 = 250; // Door switch polling
 const long intervalLED = 17; // LED update speed (ms)
+const long INTERVAL_HEARTBEAT = 15000;  // Heartbeat every 15 secs
 
 unsigned int beep = 0;
 unsigned int beepFreq = 5000; //default beep frequency is 5000hz
@@ -25,10 +27,12 @@ unsigned int ledR = 0;  //For RGB
 unsigned int ledG = 0;
 unsigned int ledB = 0;
 unsigned int curBrightness = 255;
+unsigned int LED_MODE = 1;  // 1 for usual solid color RGB
 
 bool rgbReady = false;
 bool ledUser = false; // to determine if led is turned on by user or by door response and current status of led
 bool pendingBrightness = false; // to determine whether to update brightness or not
+bool SET_LED = false; // whether to set RGB values after changing modes
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) { //not yet moved due to its current nature
   Serial.println("Publish received.");
@@ -112,6 +116,32 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     ESP.restart();
   }
+  else if(topicstr == "esp32/reqstat")  // Request statistics function
+  {
+    unsigned long REQ_STAT_CUR_MILLIS = millis(); // gets current millis
+    
+    char REQ_STAT_CUR_TEMPCHAR[60];
+    
+    snprintf(
+      REQ_STAT_CUR_TEMPCHAR,
+      60, 
+      "%d.%d.%d.%d,%lu", 
+      WiFi.localIP()[0], 
+      WiFi.localIP()[1],
+      WiFi.localIP()[2], 
+      WiFi.localIP()[3],
+      (int)REQ_STAT_CUR_MILLIS
+    );  // convert string to char array for Millis. Elegance courtesy of Shahmi Technosparks
+    
+    mqttClient.publish("esp32/curstat", 0, false, REQ_STAT_CUR_TEMPCHAR); //publish to topic and tempchar as payload
+  }
+  else if(topicstr == "/esp32/mode")
+  {
+    LED_MODE = payloadstr.toInt();
+    if(LED_MODE == 1){
+      SET_LED = true;
+    }
+  }
   /* END PROCESSING PAYLOAD AND TOPIC */
 }
 
@@ -153,15 +183,11 @@ void loop()
 
     if(beep > 0 && beeping == false)
     {
-      Serial.println("Beep!");
-      Serial.println(beep);
       ledcWriteTone(0,beepFreq);
       beeping = true;
     }
     else if(beep != 0 && beeping == true)
     {
-      Serial.println("Off Beep");
-      Serial.println(beep);
       ledcWriteTone(0,0);
       beeping = false;
       beep--;
@@ -182,13 +208,11 @@ void loop()
       {
         Serial.println("DoorState LOW");
         mqttClient.publish("esp32/doorState", 0, false, "0");
-        //beep = 1;
       }
       else 
       {
         Serial.println("DoorState HIGH");
         mqttClient.publish("esp32/doorState", 0, false, "1");
-        //beep = 2;
       }
   }
     lastdoorState = doorState;
@@ -205,19 +229,48 @@ void loop()
       FastLED.setBrightness(curBrightness);
       pendingBrightness == false;
     }
-    
-    if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
+    switch(LED_MODE)
     {
-      for(int i = 0; i < NUM_LEDS; i++) 
-    {
-      leds[i].setRGB(ledR, ledG, ledB); //Set colors
-    }
+      case 1:
+        if(rgbReady == true)  // Only set RGB colors when received. Not update RGB all the time
+        {
+          for(int i = 0; i < NUM_LEDS; i++) 
+        {
+          leds[i].setRGB(ledR, ledG, ledB); //Set colors
+        }
+        FastLEDshowESP32(); //update LED
+        rgbReady = false;
+        }
 
-    FastLEDshowESP32(); //update LED
-    rgbReady = false;
+        if(SET_LED == true) // Set LED colors to last set RGB values
+        {
+          for(int i = 0; i < NUM_LEDS; i++) 
+        {
+          leds[i].setRGB(ledR, ledG, ledB); //Set colors
+        }
+        FastLEDshowESP32(); //update LED
+        SET_LED = false;
+        }
+        break;
+      case 2:
+        Fire2012();
+        FastLEDshowESP32(); //update LED
+        break;
+      case 3:
+        rainbow();
+        FastLEDshowESP32(); //update LED
+        break;
     }
   }
   /* END LED REFRESH */
+
+  /* BEGIN HEARTBEAT */
+  if (currentMillis - PREV_MILLIS_HEARTBEAT >= INTERVAL_HEARTBEAT) 
+  {
+    PREV_MILLIS_HEARTBEAT = currentMillis;
+    mqttClient.publish("/esp32/heartbeat", 0, false, "esp32 heartbeat");
+  }
+  /* END HEARTBEAT */
 
   /* BEGIN AUTO RESTART FUNCTION */
   if(currentMillis > 4094967296)
