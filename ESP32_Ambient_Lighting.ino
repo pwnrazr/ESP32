@@ -60,7 +60,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     beeping = false;
     beep = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/led")  // Call for on/off LED
+  
+  if(topicstr == "esp32/led")  // Call for on/off LED
   {
     if(payloadstr == "1") //on
     {
@@ -75,25 +76,30 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
        ledUser = false;
     }
   }
-  else if(topicstr == "esp32/brightness") // Call for brightness setting of LED
+  
+  if(topicstr == "esp32/brightness") // Call for brightness setting of LED
   {
     curBrightness = payloadstr.toInt();
     pendingBrightness = true;
   }
-  else if(topicstr == "esp32/R")  // Call for RGB
+  
+  if(topicstr == "esp32/R")  // Call for RGB
   {
     ledR = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/G")  // Call for RGB
+  
+  if(topicstr == "esp32/G")  // Call for RGB
   {
     ledG = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/B")  // Call for RGB
+  
+  if(topicstr == "esp32/B")  // Call for RGB
   {
     ledB = payloadstr.toInt();
     rgbReady = true;
   }
-  else if(topicstr == "esp32/alert")  // Call for door alert function
+  
+  if(topicstr == "esp32/alert")  // Call for door alert function
   {
     //mqttClient.publish("esp32/debug", 0, false, "received alert");  // Use when debugging
     if(ledUser == false) // only run if leds are turned off
@@ -108,15 +114,18 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       }
     }
   }
-  else if(topicstr == "esp32/beepFreq") // Exposes beep frequency to user
+  
+  if(topicstr == "esp32/beepFreq") // Exposes beep frequency to user
   {
     beepFreq = payloadstr.toInt();
   }
-  else if(topicstr == "esp32/reboot") // Exposes reboot function
+  
+  if(topicstr == "esp32/reboot") // Exposes reboot function
   {
     ESP.restart();
   }
-  else if(topicstr == "esp32/reqstat")  // Request statistics function
+  
+  if(topicstr == "esp32/reqstat")  // Request statistics function
   {
     unsigned long REQ_STAT_CUR_MILLIS = millis(); // gets current millis
     
@@ -135,7 +144,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     
     mqttClient.publish("esp32/curstat", 0, false, REQ_STAT_CUR_TEMPCHAR); //publish to topic and tempchar as payload
   }
-  else if(topicstr == "/esp32/mode")
+  
+  if(topicstr == "/esp32/mode")
   {
     LED_MODE = payloadstr.toInt();
     if(LED_MODE == 1){
