@@ -22,7 +22,6 @@ void setup() {
   WiFi.onEvent(WiFiEvent);
 
   mqttSetup();
-  mqttClient.onMessage(onMqttMessage);  //not yet moved
   
   connectToWifi();
   
