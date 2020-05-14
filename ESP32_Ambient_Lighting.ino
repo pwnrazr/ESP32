@@ -8,7 +8,7 @@
  * #define MQTT_HOST IPAddress(192, 168, 1, 000)
  * #define MQTT_PORT 1883
  * #define MQTT_USER "mqttUser"
- * #define MQTT_PASS "mqttPassword3"
+ * #define MQTT_PASS "mqttPassword"
  * #define OTA_PASS "otaPassword"
 */
 #include "Global_variables.h"
