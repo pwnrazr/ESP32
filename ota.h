@@ -8,7 +8,7 @@ void otaSetup(){
   ArduinoOTA.setHostname("ESP32");
 
   // No authentication by default
-  ArduinoOTA.setPassword("pwnrazr123");
+  ArduinoOTA.setPassword(OTA_PASS);
 
   ArduinoOTA
     .onStart([]() {
