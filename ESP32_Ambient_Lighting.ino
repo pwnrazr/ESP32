@@ -1,18 +1,19 @@
 /*
  * ESP32 - Buzzer, Magenetic Door Switch and Room Ambient Lighting
- * 
- * To set OTA, network and MQTT credentials create a file "nodelogin" into root of C:\ and put the code below
- * 
- * #define WIFI_SSID "SSID"
- * #define WIFI_PASSWORD "NetPassword"
- * #define MQTT_HOST IPAddress(192, 168, 1, 000)
- * #define MQTT_PORT 1883
- * #define MQTT_USER "mqttUser"
- * #define MQTT_PASS "mqttPassword"
- * #define OTA_PASS "otaPassword"
-*/
+ *
+ * To setup credentials and other settings create a "settings.h" file in root of this sketch with this code below:
+  #define WIFI_SSID "My_Wi-Fi"
+  #define WIFI_PASSWORD "password"
+  
+  #define MQTT_HOST IPAddress(192, 168, 1, 10)
+  #define MQTT_PORT 1883
+  #define MQTT_USER "mqttUSR"
+  #define MQTT_PASS "mqttPASS"
+
+  #define OTA_PASS "otaPASS"
+ */
 #include "Global_variables.h"
-#include "C:/nodelogin"
+#include "settings.h"
 #include "led.h"
 #include "comms.h"
 #include "ota.h"
