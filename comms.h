@@ -264,6 +264,7 @@ void webServerHandle(){
           client.println("Content-Type: text/html");
           client.println("Connection: close");
           client.println(); // Blank line ==> end response
+          mqttClient.publish("esp32/webservTest", 0, false, "HTTP response");
           break;
         }
         if (c == '\n') { // if New line
@@ -272,13 +273,16 @@ void webServerHandle(){
         } else if (c == '\r') { // If cariage return...
           //Read in the buffer if there was send "GET /?..."
           if(buffer.indexOf("GET /?led1=1")>=0) { // If led1 = 1
-            mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED1");
+            mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED on");
             FastLED.setBrightness(curBrightness);
             ledUser = true;
+            client.println("HTTP/1.1 200 LED ON");
           }
           if(buffer.indexOf("GET /?led1=0")>=0) { // If led1 = 0
+            mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED off");
             FastLED.setBrightness(0);
             ledUser = false;
+            client.println("HTTP/1.1 200 LED OFF");
           }
         } else {
           currentLineIsBlank = false;
