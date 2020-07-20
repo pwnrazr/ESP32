@@ -42,6 +42,51 @@ void setup() {
 
 void loop() 
 {
+  //web server begin
+  WiFiClient client = server.available();   // Listen for incoming clients
+
+  if (client) { // If there is a client...
+    boolean currentLineIsBlank = true;
+    String buffer = ""; // A buffer for the GET request
+    
+    while (client.connected()) {
+  
+      if (client.available()) {
+        char c = client.read();// Read the data of the client
+        buffer += c; // Store the data in a buffer
+        
+        if (c == '\n' && currentLineIsBlank) {// if 2x new line ==> Request ended
+          // send a standard http response header
+          client.println("HTTP/1.1 200 OK");
+          client.println("Content-Type: text/html");
+          client.println("Connection: close");
+          client.println(); // Blank line ==> end response
+          break;
+        }
+        if (c == '\n') { // if New line
+          currentLineIsBlank = true;
+          buffer = "";  // Clear buffer
+        } else if (c == '\r') { // If cariage return...
+          //Read in the buffer if there was send "GET /?..."
+          if(buffer.indexOf("GET /?led1=1")>=0) { // If led1 = 1
+            mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED1");
+            FastLED.setBrightness(curBrightness);
+            ledUser = true;
+          }
+          if(buffer.indexOf("GET /?led1=0")>=0) { // If led1 = 0
+            FastLED.setBrightness(0);
+            ledUser = false;
+          }
+        } else {
+          currentLineIsBlank = false;
+        }
+      }
+    }
+    delay(1);
+    client.stop();
+  }
+  //web server end
+  
   ledloop();
   
   ArduinoOTA.handle();
