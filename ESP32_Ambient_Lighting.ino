@@ -36,6 +36,8 @@ void setup() {
   mqttSetup();
   
   connectToWifi();
+
+  webServSetup();
   
   otaSetup();
 }

@@ -6,8 +6,12 @@ extern "C" {
 #include <ESPmDNS.h>
 #include <WiFiUdp.h>
 #include <WiFi.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 
 AsyncMqttClient mqttClient;
+
+AsyncWebServer server(80); // WebServ
 
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
@@ -238,3 +242,35 @@ void mqttSetup() {
   mqttClient.setServer(MQTT_HOST, MQTT_PORT);
   mqttClient.setCredentials(MQTT_USER, MQTT_PASS);
 }
+// WebServ
+void notFound(AsyncWebServerRequest *request) {
+    request->send(404, "text/plain", "ESP32: ERROR");
+}
+
+void webServSetup() {   // webServ - processing things go here
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+        request->send(200, "text/plain", "Pwnrazr's ESP32 here");
+    });
+
+    server.on("/reqled", HTTP_GET, [](AsyncWebServerRequest *request){
+      if(ledUser) {
+        request->send(200, "text/plain", "LED,ON");
+      } else {
+        request->send(200, "text/plain", "LED,OFF");
+      }
+    });
+    
+    server.on("/led1=1", HTTP_GET, [](AsyncWebServerRequest *request){
+      FastLED.setBrightness(curBrightness);
+      ledUser = true;
+    });
+    server.on("/led1=0", HTTP_GET, [](AsyncWebServerRequest *request){
+      FastLED.setBrightness(0);
+      ledUser = false;
+    });
+
+    server.onNotFound(notFound);
+
+    server.begin();
+}
+// WebServ
