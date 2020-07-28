@@ -14,14 +14,9 @@ TimerHandle_t wifiReconnectTimer;
 
 bool haveRun = false;
 
-//web server
-WiFiServer server(80);
-
-
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  server.begin();
 }
 
 void connectToMqtt() {
