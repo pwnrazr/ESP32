@@ -263,10 +263,12 @@ void webServSetup() {   // webServ - processing things go here
     server.on("/led1=1", HTTP_GET, [](AsyncWebServerRequest *request){
       FastLED.setBrightness(curBrightness);
       ledUser = true;
+      request->send(204);
     });
     server.on("/led1=0", HTTP_GET, [](AsyncWebServerRequest *request){
       FastLED.setBrightness(0);
       ledUser = false;
+      request->send(204);
     });
 
     server.onNotFound(notFound);
