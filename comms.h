@@ -276,13 +276,13 @@ void webServerHandle(){
             mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED on");
             FastLED.setBrightness(curBrightness);
             ledUser = true;
-            client.println("HTTP/1.1 200 LED,ON");
+            client.println("HTTP/1.1 200 LED ON");
           }
           if(buffer.indexOf("GET /?led1=0")>=0) { // If led1 = 0
             mqttClient.publish("esp32/webservTest", 0, false, "Web server response LED off");
             FastLED.setBrightness(0);
             ledUser = false;
-            client.println("HTTP/1.1 200 LED,OFF");
+            client.println("HTTP/1.1 200 LED OFF");
           }
         } else {
           currentLineIsBlank = false;
