@@ -284,16 +284,6 @@ void webServerHandle(){
             ledUser = false;
             client.println("HTTP/1.1 200 LED,OFF");
           }
-          if(buffer.indexOf("GET /?reqled")>=0) { // App request of LED status
-            mqttClient.publish("esp32/webservTest", 0, false, "Web server request LED");
-            if(ledUser)
-            {
-              client.println("HTTP/1.1 200 LED,ON");
-            } else
-            {
-              client.println("HTTP/1.1 200 LED,OFF");
-            }
-          }
         } else {
           currentLineIsBlank = false;
         }
