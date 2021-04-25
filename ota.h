@@ -5,7 +5,7 @@ void otaSetup(){
   // ArduinoOTA.setPort(3232);
 
   // Hostname defaults to esp3232-[MAC]
-  ArduinoOTA.setHostname("ESP32");
+  ArduinoOTA.setHostname("pwn-ESP32");
 
   // No authentication by default
   ArduinoOTA.setPassword(OTA_PASS);
