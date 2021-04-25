@@ -142,7 +142,7 @@ void ledloop()
 {
   // Call the current pattern function once, updating the 'leds' array
   //gPatterns[gCurrentPatternNumber]();
-  sinelon();
+  rainbow();
   // send the 'leds' array out to the actual LED strip
   FastLEDshowESP32();
   // FastLED.show();
