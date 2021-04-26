@@ -6,21 +6,11 @@
 void setup()
 {
   Serial.begin(115200);
-  Serial.println("boot");
-
   BTsetup();
-
   ledsetup();
-  Serial.println("ledsetup");
-
   wifiSetup();
-  Serial.println("wifisetup");
-
   webServSetup();
-  Serial.println("webservsetup");
-
   otaSetup();
-  Serial.println("otasetup");
 }
 
 void loop()
