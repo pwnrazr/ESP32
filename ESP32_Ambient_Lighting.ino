@@ -3,33 +3,49 @@
 #include "comms.h"
 #include "ota.h"
 
-void setup() 
+void setup()
 {
   Serial.begin(115200);
   Serial.println("boot");
-  
+
   BTsetup();
-  
+
   ledsetup();
   Serial.println("ledsetup");
-  
+
   wifiSetup();
   Serial.println("wifisetup");
-  
+
   webServSetup();
   Serial.println("webservsetup");
-  
+
   otaSetup();
   Serial.println("otasetup");
 }
 
-void loop() 
+void loop()
 {
   ArduinoOTA.handle();
   ledloop();
 
-  EVERY_N_SECONDS( 2 ) 
+  while (SerialBT.available())
   {
-    SerialBT.println(WiFi.localIP());
+    String btString = SerialBT.readString();
+    btString.trim();
+    SerialBT.print("Received:");
+    SerialBT.println(btString);
+
+    if(btString == "led=1")
+    {
+      FastLED.setBrightness(255);
+    }
+    else if(btString =="led=0")
+    {
+      FastLED.setBrightness(0);
+    }
+    else if(btString == "status")
+    {
+      SerialBT.println(WiFi.localIP());
+    }
   }
 }
