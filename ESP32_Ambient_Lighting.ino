@@ -3,8 +3,6 @@
 #include "comms.h"
 #include "ota.h"
 
-int num = 0;
-
 void setup() 
 {
   Serial.begin(115200);
@@ -32,7 +30,6 @@ void loop()
 
   EVERY_N_SECONDS( 2 ) 
   {
-    SerialBT.println(num);
-    num++;  // Test only 
+    SerialBT.println(WiFi.localIP());
   }
 }
