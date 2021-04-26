@@ -25,6 +25,13 @@ void loop()
     SerialBT.print("Received:");
     SerialBT.println(btString);
 
+    if(btString == "help" || "Help")
+    {
+      SerialBT.println("led=0/1");
+      SerialBT.println("restart");
+      SerialBT.println("status");
+    }
+    
     if(btString == "led=1")
     {
       FastLED.setBrightness(255);
@@ -39,6 +46,10 @@ void loop()
       SerialBT.println(WiFi.status());
       SerialBT.print("IP: ");
       SerialBT.println(WiFi.localIP());
+    }
+    else if(btString == "restart")
+    {
+      ESP.restart();
     }
   }
 }
