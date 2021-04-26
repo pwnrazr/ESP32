@@ -35,6 +35,9 @@ void loop()
     }
     else if(btString == "status")
     {
+      SerialBT.print("WiFi Status: ");
+      SerialBT.println(WiFi.status());
+      SerialBT.print("IP: ");
       SerialBT.println(WiFi.localIP());
     }
   }
