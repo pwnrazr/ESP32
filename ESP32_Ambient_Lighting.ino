@@ -3,6 +3,8 @@
 #include "comms.h"
 #include "ota.h"
 
+#define roomclock_pin 32
+
 void setup()
 {
   Serial.begin(115200);
@@ -11,6 +13,9 @@ void setup()
   wifiSetup();
   webServSetup();
   otaSetup();
+
+  pinMode(roomclock_pin, OUTPUT);
+  digitalWrite(roomclock_pin, HIGH);
 }
 
 void loop()
@@ -28,8 +33,18 @@ void loop()
     if(btString == "help" || "Help")
     {
       SerialBT.println("led=0/1");
+      SerialBT.println("clock=0/1");
       SerialBT.println("restart");
       SerialBT.println("status");
+    }
+
+    if(btString == "clock=1")
+    {
+      digitalWrite(roomclock_pin, HIGH);
+    }
+    else if(btString == "clock=0")
+    {
+      digitalWrite(roomclock_pin, LOW);
     }
     
     if(btString == "led=1")
