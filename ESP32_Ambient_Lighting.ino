@@ -23,22 +23,21 @@ void loop()
   ArduinoOTA.handle();
   ledloop();
 
-  while (SerialBT.available())
+  if (SerialBT.available())
   {
     String btString = SerialBT.readString();
     btString.trim();
     SerialBT.print("Received:");
     SerialBT.println(btString);
 
-    if(btString == "help" || "Help")
+    if(btString == "help")
     {
       SerialBT.println("led=0/1");
       SerialBT.println("clock=0/1");
       SerialBT.println("restart");
       SerialBT.println("status");
     }
-
-    if(btString == "clock=1")
+    else if(btString == "clock=1")
     {
       digitalWrite(roomclock_pin, HIGH);
     }
@@ -46,12 +45,11 @@ void loop()
     {
       digitalWrite(roomclock_pin, LOW);
     }
-    
-    if(btString == "led=1")
+    else if(btString == "led=1")
     {
       FastLED.setBrightness(255);
     }
-    else if(btString =="led=0")
+    else if(btString == "led=0")
     {
       FastLED.setBrightness(0);
     }
@@ -65,6 +63,10 @@ void loop()
     else if(btString == "restart")
     {
       ESP.restart();
+    }
+    else
+    {
+      SerialBT.println("ERROR");
     }
   }
 }
