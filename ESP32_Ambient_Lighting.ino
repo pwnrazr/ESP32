@@ -5,6 +5,8 @@
 
 #define roomclock_pin 32
 
+unsigned int dc_time = 0;
+
 void setup()
 {
   Serial.begin(115200);
@@ -20,6 +22,16 @@ void setup()
 
 void loop()
 {
+  EVERY_N_SECONDS(1) 
+  { 
+    if((WiFi.status() != WL_CONNECTED))
+    {
+      dc_time++;
+      WiFi.disconnect();
+      WiFi.reconnect();
+    }
+  }
+  
   ArduinoOTA.handle();
   ledloop();
 
@@ -59,6 +71,8 @@ void loop()
       SerialBT.println(WiFi.status());
       SerialBT.print("IP: ");
       SerialBT.println(WiFi.localIP());
+      SerialBT.print("Time disconnected(s):");
+      SerialBT.println(dc_time);
     }
     else if(btString == "restart")
     {
