@@ -3,8 +3,6 @@
 #include "comms.h"
 #include "ota.h"
 
-#define roomclock_pin 32
-
 unsigned int dc_time = 0;
 
 void setup()

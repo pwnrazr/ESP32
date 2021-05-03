@@ -9,6 +9,8 @@
 #endif
 #include <ESPAsyncWebServer.h>
 
+#define roomclock_pin 32
+
 AsyncWebServer server(80);
 
 const char* ssid = WIFI_SSID;
@@ -44,6 +46,14 @@ void webServSetup() {   // webServ - processing things go here
         request->send(200, "text/plain", "LED,OFF");
       }
     });
+
+    server.on("/reqclock", HTTP_GET, [](AsyncWebServerRequest *request){
+      if(digitalRead(roomclock_pin) == HIGH) {
+        request->send(200, "text/plain", "CLOCK,ON");
+      } else {
+        request->send(200, "text/plain", "CLOCK,OFF");
+      }
+    });
     
     server.on("/led=1", HTTP_GET, [](AsyncWebServerRequest *request){
       FastLED.setBrightness(255);
@@ -53,6 +63,15 @@ void webServSetup() {   // webServ - processing things go here
     server.on("/led=0", HTTP_GET, [](AsyncWebServerRequest *request){
       FastLED.setBrightness(0);
       ledState = false;
+      request->send(204);
+    });
+
+    server.on("/clock=1", HTTP_GET, [](AsyncWebServerRequest *request){
+      digitalWrite(roomclock_pin, HIGH);
+      request->send(204);
+    });
+    server.on("/clock=0", HTTP_GET, [](AsyncWebServerRequest *request){
+      digitalWrite(roomclock_pin, LOW);
       request->send(204);
     });
 
