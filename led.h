@@ -84,8 +84,8 @@ void ledsetup() {
   FastLED.setBrightness(BRIGHTNESS);
 
     int core = xPortGetCoreID();
-    Serial.print("Main code running on core ");
-    Serial.println(core);
+    //Serial.print("Main code running on core ");
+    //Serial.println(core);
 
     // -- Create the FastLED show task
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);

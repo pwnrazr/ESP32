@@ -9,7 +9,7 @@ unsigned int dc_time = 0;
 
 void setup()
 {
-  Serial.begin(115200);
+  //Serial.begin(115200);
   BTsetup();
   ledsetup();
   wifiSetup();

@@ -19,12 +19,12 @@ void wifiSetup()
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid, password);
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
-        Serial.printf("WiFi Failed!\n");
+        //Serial.printf("WiFi Failed!\n");
         return;
     }
 
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.localIP());
+    //Serial.print("IP Address: ");
+    //Serial.println(WiFi.localIP());
 }
 
 // WebServ
