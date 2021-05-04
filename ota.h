@@ -25,7 +25,7 @@ void otaSetup(){
       SerialBT.println("\nEnd");
     })
     .onProgress([](unsigned int progress, unsigned int total) {
-      SerialBT.printf("Progress: %u%%\r", (progress / (total / 100)));
+      //SerialBT.printf("Progress: %u%%\r", (progress / (total / 100)));
     })
     .onError([](ota_error_t error) {
       SerialBT.printf("Error[%u]: ", error);
