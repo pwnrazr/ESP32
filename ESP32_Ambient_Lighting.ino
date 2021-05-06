@@ -26,7 +26,7 @@ void loop()
     {
       dc_time++;
       WiFi.disconnect();
-      WiFi.reconnect();
+      WiFi.begin(ssid, password);
     }
   }
   
