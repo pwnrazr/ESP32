@@ -2,8 +2,15 @@
 #include "led.h"
 #include "comms.h"
 #include "ota.h"
+#include "time.h"
 
 unsigned int dc_time = 0;
+
+// Time related
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 25200;  // Kuala Lumpur GMT+8 = 8 - 1 * (60 * 60) = 25200secs
+const int   daylightOffset_sec = 3600;
+bool haveOnClock = false; // To save whether the auto on/off has set the state or not. Prevent setting on/off multiple times
 
 void setup()
 {
@@ -16,6 +23,9 @@ void setup()
 
   pinMode(roomclock_pin, OUTPUT);
   digitalWrite(roomclock_pin, HIGH);
+
+  // Time related config
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 
 void loop()
@@ -27,6 +37,26 @@ void loop()
       dc_time++;
       WiFi.disconnect();
       WiFi.begin(ssid, password);
+    }
+  }
+
+  EVERY_N_SECONDS(60)
+  {
+    struct tm timeinfo;
+    if(!getLocalTime(&timeinfo)){
+      SerialBT.println("Failed to obtain time");
+    }
+    //SerialBT.println(&timeinfo, "Hr:%H");
+    
+    if(timeinfo.tm_hour == 22 && haveOnClock == false){ // Turn off at 10PM
+      digitalWrite(roomclock_pin, LOW);
+      //SerialBT.println("Auto turn OFF clock");
+      haveOnClock = true;
+    }
+    else if(timeinfo.tm_hour == 8 && haveOnClock == true){  // Turn on at 8AM
+      digitalWrite(roomclock_pin, HIGH);
+      //SerialBT.println("Auto turn ON clock");
+      haveOnClock = false;
     }
   }
   
@@ -46,6 +76,7 @@ void loop()
       SerialBT.println("clock=0/1");
       SerialBT.println("restart");
       SerialBT.println("status");
+      SerialBT.println("time");
     }
     else if(btString == "clock=1")
     {
@@ -76,9 +107,46 @@ void loop()
     {
       ESP.restart();
     }
+    else if(btString == "time")
+    {
+      printLocalTime();
+    }
     else
     {
       SerialBT.println("ERROR");
     }
   }
+}
+
+void printLocalTime(){
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    SerialBT.println("Failed to obtain time");
+    return;
+  }
+  SerialBT.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+  SerialBT.print("Day of week: ");
+  SerialBT.println(&timeinfo, "%A");
+  SerialBT.print("Month: ");
+  SerialBT.println(&timeinfo, "%B");
+  SerialBT.print("Day of Month: ");
+  SerialBT.println(&timeinfo, "%d");
+  SerialBT.print("Year: ");
+  SerialBT.println(&timeinfo, "%Y");
+  SerialBT.print("Hour: ");
+  SerialBT.println(&timeinfo, "%H");
+  SerialBT.print("Hour (12 hour format): ");
+  SerialBT.println(&timeinfo, "%I");
+  SerialBT.print("Minute: ");
+  SerialBT.println(&timeinfo, "%M");
+  SerialBT.print("Second: ");
+  SerialBT.println(&timeinfo, "%S");
+
+  SerialBT.println("Time variables");
+  char timeHour[3];
+  strftime(timeHour,3, "%H", &timeinfo);
+  SerialBT.println(timeHour);
+  char timeWeekDay[10];
+  strftime(timeWeekDay,10, "%A", &timeinfo);
+  SerialBT.println(timeWeekDay);
 }
