@@ -26,6 +26,7 @@ void setup()
 
   // Time related config
   configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+  setSchedClock();
 }
 
 void loop()
@@ -149,4 +150,18 @@ void printLocalTime(){
   char timeWeekDay[10];
   strftime(timeWeekDay,10, "%A", &timeinfo);
   SerialBT.println(timeWeekDay);
+}
+
+void setSchedClock()  // To set haveOnClock properly so that scheduling thing works fine if esp32 restart after 10pm
+{
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    SerialBT.println("Failed to obtain time");
+  }
+  //SerialBT.println(&timeinfo, "Hr:%H");
+
+  if(timeinfo.tm_hour <= 8 || timeinfo.tm_hour >= 23)
+  {
+    haveOnClock = true;
+  }
 }
