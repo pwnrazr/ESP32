@@ -78,6 +78,7 @@ void loop()
       SerialBT.println("restart");
       SerialBT.println("status");
       SerialBT.println("time");
+      SerialBT.println("nextledeffect");
     }
     else if(btString == "clock=1")
     {
@@ -111,6 +112,12 @@ void loop()
     else if(btString == "time")
     {
       printLocalTime();
+    }
+    else if(btString == "nextledeffect")
+    {
+      changeledEffect();
+      SerialBT.print("curEffect:");
+      SerialBT.println(curEffect);
     }
     else
     {

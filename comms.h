@@ -75,6 +75,11 @@ void webServSetup() {   // webServ - processing things go here
       request->send(204);
     });
 
+    server.on("/nextledeffect", HTTP_GET, [](AsyncWebServerRequest *request){
+      changeledEffect();
+      request->send(204);
+    });
+
     server.onNotFound(notFound);
 
     server.begin();

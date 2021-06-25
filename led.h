@@ -34,6 +34,8 @@ static TaskHandle_t userTaskHandle = 0;
 
 bool ledState = true;  // LED on or off state
 
+unsigned int curEffect = 0;
+
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
  *  then waits for a notification that it is done.
@@ -142,7 +144,29 @@ void ledloop()
 {
   // Call the current pattern function once, updating the 'leds' array
   //gPatterns[gCurrentPatternNumber]();
-  rainbow();
+  switch(curEffect)
+  {
+    case 0:
+    rainbow();
+      break;
+      
+    case 1:
+    confetti();
+      break;
+      
+    case 2:
+    sinelon();
+      break;
+      
+    case 3:
+    bpm();
+      break;
+      
+    case 4:
+    juggle();
+      break;
+  }
+  
   // send the 'leds' array out to the actual LED strip
   FastLEDshowESP32();
   // FastLED.show();
@@ -152,4 +176,16 @@ void ledloop()
   // do some periodic updates
   EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
   //EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+}
+
+void changeledEffect()
+{
+  if(curEffect != 4)
+  {
+    curEffect++;
+  }
+  else
+  {
+    curEffect = 0;
+  }
 }
