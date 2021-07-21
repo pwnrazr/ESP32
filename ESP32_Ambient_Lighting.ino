@@ -54,7 +54,7 @@ void loop()
       //SerialBT.println("Auto turn OFF clock");
       haveOnClock = true;
     }
-    else if(timeinfo.tm_hour == 8 && haveOnClock == true){  // Turn on at 8AM
+    else if(timeinfo.tm_hour == 10 && haveOnClock == true){  // Turn on at 10AM
       digitalWrite(roomclock_pin, HIGH);
       //SerialBT.println("Auto turn ON clock");
       haveOnClock = false;
@@ -167,7 +167,7 @@ void setSchedClock()  // To set haveOnClock properly so that scheduling thing wo
   }
   //SerialBT.println(&timeinfo, "Hr:%H");
 
-  if(timeinfo.tm_hour <= 8 || timeinfo.tm_hour >= 23)
+  if(timeinfo.tm_hour <= 10 || timeinfo.tm_hour >= 23)
   {
     haveOnClock = true;
   }
