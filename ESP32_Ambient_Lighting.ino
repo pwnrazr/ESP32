@@ -18,7 +18,6 @@ void setup()
   BTsetup();
   ledsetup();
   wifiSetup();
-  webServSetup();
   otaSetup();
 
   pinMode(roomclock_pin, OUTPUT);
