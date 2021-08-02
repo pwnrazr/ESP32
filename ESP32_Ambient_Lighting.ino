@@ -35,10 +35,12 @@ void loop()
     
     if(timeinfo.tm_hour == 22 && haveOnClock == false){ // Turn off at 10PM
       digitalWrite(roomclock_pin, LOW);
+      mqttClient.publish("esp32/clockState", 2, false, "false");
       haveOnClock = true;
     }
     else if(timeinfo.tm_hour == 10 && haveOnClock == true){  // Turn on at 10AM
       digitalWrite(roomclock_pin, HIGH);
+      mqttClient.publish("esp32/clockState", 2, false, "true");
       haveOnClock = false;
     }
   }
