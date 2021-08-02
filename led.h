@@ -91,6 +91,10 @@ void ledsetup() {
 
     // -- Create the FastLED show task
     xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
+    for(int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = CRGB::Red;
+    }
+    FastLEDshowESP32();
 }
 
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns

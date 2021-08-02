@@ -125,7 +125,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
     strtokIndx = strtok(NULL,",");
     strcpy(state, strtokIndx);
-
+    
+    for(int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = rgbval;
+    }
+    
     if(strcmp(state, "true") == 0)
     {
       FastLED.setBrightness(brightness);
@@ -134,6 +138,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     {
       FastLED.setBrightness(0);
     }
+    FastLEDshowESP32();
   }
 }
 
