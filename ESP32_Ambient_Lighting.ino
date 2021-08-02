@@ -14,7 +14,7 @@ bool haveOnClock = false; // To save whether the auto on/off has set the state o
 
 void setup()
 {
-  //Serial.begin(115200);
+  Serial.begin(115200);
   BTsetup();
   ledsetup();
   wifiSetup();
@@ -29,7 +29,8 @@ void setup()
 }
 
 void loop()
-{
+{ 
+  /*
   EVERY_N_SECONDS(1) 
   { 
     if((WiFi.status() != WL_CONNECTED))
@@ -38,7 +39,7 @@ void loop()
       WiFi.disconnect();
       WiFi.begin(ssid, password);
     }
-  }
+  }*/
 
   EVERY_N_SECONDS(60)
   {
