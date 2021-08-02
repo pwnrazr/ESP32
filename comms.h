@@ -114,14 +114,14 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     char * strtokIndx;
 
     int brightness;
-    int rgbval;
+    unsigned long rgbval;
     char state[8];
 
     strtokIndx = strtok(payload,",");
     brightness = map(atoi(strtokIndx), 3, 100, 3, 255);
     
     strtokIndx = strtok(NULL,",");
-    rgbval = atoi(strtokIndx);
+    rgbval = atol(strtokIndx);
 
     strtokIndx = strtok(NULL,",");
     strcpy(state, strtokIndx);
