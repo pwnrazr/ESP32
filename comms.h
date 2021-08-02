@@ -46,7 +46,8 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/forcestopbeep", 2);
   */
   
-  mqttClient.subscribe("esp32/test", 2);
+  mqttClient.subscribe("esp32/clock", 2);
+  mqttClient.subscribe("esp32/led", 2);
   
   char CUR_IP[20];
     snprintf(
@@ -84,7 +85,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     topicstr = String(topicstr + (char)topic[i]);  //convert topic to string
   }
-  
+
   /* BEGIN PROCESSING PAYLOAD AND TOPIC */
   /*
     if(topicstr == "esp32/beepamount")  // Call for beeping
@@ -95,16 +96,43 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     beep = payloadstr.toInt();
   }
    */
-  
-  if(topicstr == "esp32/test")
+
+  if(topicstr == "esp32/clock")
   {
     if(payloadstr == "true")
     {
-       digitalWrite(roomclock_pin, HIGH);
+      digitalWrite(roomclock_pin, HIGH);
     }
     else if(payloadstr == "false")
     {
       digitalWrite(roomclock_pin, LOW);
+    }
+  }
+
+  if(topicstr == "esp32/led")
+  {
+    char * strtokIndx;
+
+    int brightness;
+    int rgbval;
+    char state[8];
+
+    strtokIndx = strtok(payload,",");
+    brightness = map(atoi(strtokIndx), 3, 100, 3, 255);
+    
+    strtokIndx = strtok(NULL,",");
+    rgbval = atoi(strtokIndx);
+
+    strtokIndx = strtok(NULL,",");
+    strcpy(state, strtokIndx);
+
+    if(strcmp(state, "true") == 0)
+    {
+      FastLED.setBrightness(brightness);
+    }
+    else if(strcmp(state, "false") == 0)
+    {
+      FastLED.setBrightness(0);
     }
   }
 }
