@@ -4,8 +4,6 @@
 #include "ota.h"
 #include "time.h"
 
-unsigned int dc_time = 0;
-
 // Time related
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 25200;  // Kuala Lumpur GMT+8 = 8 - 1 * (60 * 60) = 25200secs
@@ -30,17 +28,6 @@ void setup()
 
 void loop()
 { 
-  /*
-  EVERY_N_SECONDS(1) 
-  { 
-    if((WiFi.status() != WL_CONNECTED))
-    {
-      dc_time++;
-      WiFi.disconnect();
-      WiFi.begin(ssid, password);
-    }
-  }*/
-
   EVERY_N_SECONDS(60)
   {
     struct tm timeinfo;
@@ -102,8 +89,6 @@ void loop()
       SerialBT.println(WiFi.status());
       SerialBT.print("IP: ");
       SerialBT.println(WiFi.localIP());
-      SerialBT.print("Time disconnected(s):");
-      SerialBT.println(dc_time);
     }
     else if(btString == "restart")
     {
