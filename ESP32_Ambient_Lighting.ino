@@ -45,6 +45,11 @@ void loop()
     }
   }
   
+  EVERY_N_SECONDS(15) // Heartbeat
+  {
+    mqttClient.publish("esp32/heartbeat", 2, false, "Hi");
+  }
+  
   ArduinoOTA.handle();
   //ledloop();
 }
