@@ -38,19 +38,19 @@ static TaskHandle_t userTaskHandle = 0;
  */
 void FastLEDshowESP32()
 {
-    if (userTaskHandle == 0) {
-        // -- Store the handle of the current task, so that the show task can
-        //    notify it when it's done
-        userTaskHandle = xTaskGetCurrentTaskHandle();
+  if (userTaskHandle == 0) {
+    // -- Store the handle of the current task, so that the show task can
+    //    notify it when it's done
+    userTaskHandle = xTaskGetCurrentTaskHandle();
 
-        // -- Trigger the show task
-        xTaskNotifyGive(FastLEDshowTaskHandle);
+    // -- Trigger the show task
+    xTaskNotifyGive(FastLEDshowTaskHandle);
 
-        // -- Wait to be notified that it's done
-        const TickType_t xMaxBlockTime = pdMS_TO_TICKS( 200 );
-        ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
-        userTaskHandle = 0;
-    }
+    // -- Wait to be notified that it's done
+    const TickType_t xMaxBlockTime = pdMS_TO_TICKS( 200 );
+    ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
+    userTaskHandle = 0;
+  }
 }
 
 /** show Task
@@ -58,17 +58,17 @@ void FastLEDshowESP32()
  */
 void FastLEDshowTask(void *pvParameters)
 {
-    // -- Run forever...
-    for(;;) {
-        // -- Wait for the trigger
-        ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+  // -- Run forever...
+  for(;;) {
+    // -- Wait for the trigger
+    ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
 
-        // -- Do the show (synchronously)
-        FastLED.show();
+    // -- Do the show (synchronously)
+    FastLED.show();
 
-        // -- Notify the calling task
-        xTaskNotifyGive(userTaskHandle);
-    }
+    // -- Notify the calling task
+    xTaskNotifyGive(userTaskHandle);
+  }
 }
 
 void ledsetup() {
@@ -81,16 +81,16 @@ void ledsetup() {
   // set master brightness control
   FastLED.setBrightness(BRIGHTNESS);
 
-    int core = xPortGetCoreID();
-    //Serial.print("Main code running on core ");
-    //Serial.println(core);
+  int core = xPortGetCoreID();
+  //Serial.print("Main code running on core ");
+  //Serial.println(core);
 
-    // -- Create the FastLED show task
-    xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
-    for(int i = 0; i < NUM_LEDS; i++) {
-      leds[i] = 8900346;
-    }
-    FastLEDshowESP32();
+  // -- Create the FastLED show task
+  xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
+  for(int i = 0; i < NUM_LEDS; i++) {
+    leds[i] = 8900346;
+  }
+  FastLEDshowESP32();
 }
   
 void ledloop()
