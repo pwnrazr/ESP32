@@ -89,15 +89,6 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
 
   /* BEGIN PROCESSING PAYLOAD AND TOPIC */
-  /*
-    if(topicstr == "esp32/beepamount")  // Call for beeping
-    {
-    beep = 0; //stops beeping first to prevent nonstop beeping
-    ledcWriteTone(0,0);
-    beeping = false;
-    beep = payloadstr.toInt();
-    }
-  */
   if(topicstr == "esp32/restart")
   {
     ESP.restart();
