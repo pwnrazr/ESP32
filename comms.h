@@ -49,6 +49,8 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/clock", 2);
   mqttClient.subscribe("esp32/led", 2);
   mqttClient.subscribe("esp32/restart", 2);
+  mqttClient.subscribe("esp32/sync", 2);
+  
   char CUR_IP[20];
   snprintf(
     CUR_IP,
