@@ -32,6 +32,9 @@ CRGB leds[NUM_LEDS];
 static TaskHandle_t FastLEDshowTaskHandle = 0;
 static TaskHandle_t userTaskHandle = 0;
 
+unsigned long rgbval = 8900346;
+int brightness = 20;
+
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
  *  then waits for a notification that it is done.
@@ -79,7 +82,7 @@ void ledsetup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
   // set master brightness control
-  FastLED.setBrightness(BRIGHTNESS);
+  FastLED.setBrightness(brightness);
 
   int core = xPortGetCoreID();
   //Serial.print("Main code running on core ");
@@ -88,7 +91,7 @@ void ledsetup() {
   // -- Create the FastLED show task
   xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
   for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = 8900346;
+    leds[i] = rgbval;
   }
   FastLEDshowESP32();
 }
