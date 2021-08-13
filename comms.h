@@ -144,10 +144,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if (strcmp(state, "true") == 0)
     {
       FastLED.setBrightness(brightness);
+      ledState = true;
     }
     else if (strcmp(state, "false") == 0)
     {
       FastLED.setBrightness(0);
+      ledState = false;
     }
     FastLEDshowESP32();
   }

@@ -34,6 +34,7 @@ static TaskHandle_t userTaskHandle = 0;
 
 unsigned long rgbval = 8900346;
 int brightness = 20;
+bool ledState = true;
 
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
