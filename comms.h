@@ -99,10 +99,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if (payloadstr == "true")
     {
       digitalWrite(roomclock_pin, HIGH);
+      mqttClient.publish("esp32/clockState", 2, false, "true");
     }
     else if (payloadstr == "false")
     {
       digitalWrite(roomclock_pin, LOW);
+      mqttClient.publish("esp32/clockState", 2, false, "false");
     }
   }
 
