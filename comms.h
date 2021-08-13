@@ -9,6 +9,8 @@ extern "C" {
 
 #define roomclock_pin 32
 
+#define MQTT_QOS 0
+
 AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
@@ -46,10 +48,10 @@ void onMqttConnect(bool sessionPresent) {
     mqttClient.subscribe("esp32/forcestopbeep", 2);
   */
 
-  mqttClient.subscribe("esp32/clock", 2);
-  mqttClient.subscribe("esp32/led", 2);
-  mqttClient.subscribe("esp32/restart", 2);
-  mqttClient.subscribe("esp32/sync", 2);
+  mqttClient.subscribe("esp32/clock", MQTT_QOS);
+  mqttClient.subscribe("esp32/led", MQTT_QOS);
+  mqttClient.subscribe("esp32/restart", MQTT_QOS);
+  mqttClient.subscribe("esp32/sync", MQTT_QOS);
   
   char CUR_IP[20];
   snprintf(
@@ -62,9 +64,9 @@ void onMqttConnect(bool sessionPresent) {
     WiFi.localIP()[3]
   );  // convert string to char array
 
-  mqttClient.publish("esp32/connect", 0, false, CUR_IP);  // Publish IP on connect
-  mqttClient.publish("esp32/clockState", 2, false, "true");  // Publish clock state as ON
-  mqttClient.publish("esp32/ledState", 2, false, "10,8900346,true");  // Publish ledState as set color
+  mqttClient.publish("esp32/connect", MQTT_QOS, false, CUR_IP);  // Publish IP on connect
+  mqttClient.publish("esp32/clockState", MQTT_QOS, false, "true");  // Publish clock state as ON
+  mqttClient.publish("esp32/ledState", MQTT_QOS, false, "10,8900346,true");  // Publish ledState as set color
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
@@ -100,11 +102,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if(digitalRead(roomclock_pin) == HIGH)
     {
-      mqttClient.publish("esp32/clockState", 2, false, "true");
+      mqttClient.publish("esp32/clockState", MQTT_QOS, false, "true");
     }
     else if(digitalRead(roomclock_pin) == LOW)
     {
-      mqttClient.publish("esp32/clockState", 2, false, "false");
+      mqttClient.publish("esp32/clockState", MQTT_QOS, false, "false");
     }
 
     int brightnessConv = map(brightness, 3, 255, 1, 100);
@@ -132,7 +134,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       ledStateChar
     );
     
-    mqttClient.publish("esp32/ledState", 2, false, message);
+    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message);
   }
   
   if (topicstr == "esp32/clock")
@@ -140,12 +142,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if (payloadstr == "true")
     {
       digitalWrite(roomclock_pin, HIGH);
-      mqttClient.publish("esp32/clockState", 2, false, "true");
+      mqttClient.publish("esp32/clockState", MQTT_QOS, false, "true");
     }
     else if (payloadstr == "false")
     {
       digitalWrite(roomclock_pin, LOW);
-      mqttClient.publish("esp32/clockState", 2, false, "false");
+      mqttClient.publish("esp32/clockState", MQTT_QOS, false, "false");
     }
   }
 
