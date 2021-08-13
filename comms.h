@@ -106,6 +106,33 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     {
       mqttClient.publish("esp32/clockState", 2, false, "false");
     }
+
+    int brightnessConv = map(brightness, 3, 255, 1, 100);
+    char ledStateChar[8];
+    String state;
+    char message[30];
+    
+    if(ledState)
+    {
+      state = "true";
+    }
+    else
+    {
+      state = "false";
+    } 
+    
+    state.toCharArray(ledStateChar, 8);
+    
+    snprintf(
+      message,
+      30,
+      "%d,%ld,%s",
+      brightnessConv,
+      rgbval,
+      ledStateChar
+    );
+    
+    mqttClient.publish("esp32/ledState", 2, false, message);
   }
   
   if (topicstr == "esp32/clock")
