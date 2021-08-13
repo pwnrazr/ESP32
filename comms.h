@@ -93,6 +93,18 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     ESP.restart();
   }
+
+  if (topicstr == "esp32/sync")
+  {
+    if(digitalRead(roomclock_pin) == HIGH)
+    {
+      mqttClient.publish("esp32/clockState", 2, false, "true");
+    }
+    else if(digitalRead(roomclock_pin) == LOW)
+    {
+      mqttClient.publish("esp32/clockState", 2, false, "false");
+    }
+  }
   
   if (topicstr == "esp32/clock")
   {
