@@ -15,6 +15,8 @@ AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 
+void ledStateSync();
+
 void connectToWifi() {
   Serial.println("Connecting to Wi-Fi...");
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -109,32 +111,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       mqttClient.publish("esp32/clockState", MQTT_QOS, false, "false");
     }
 
-    int brightnessConv = map(brightness, 3, 255, 1, 100);
-    char ledStateChar[8];
-    String state;
-    char message[30];
-    
-    if(ledState)
-    {
-      state = "true";
-    }
-    else
-    {
-      state = "false";
-    } 
-    
-    state.toCharArray(ledStateChar, 8);
-    
-    snprintf(
-      message,
-      30,
-      "%d,%ld,%s",
-      brightnessConv,
-      rgbval,
-      ledStateChar
-    );
-    
-    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message);
+    ledStateSync();
   }
   
   if (topicstr == "esp32/clock")
@@ -181,6 +158,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       ledState = false;
     }
     FastLEDshowESP32();
+    ledStateSync();
   }
 }
 
@@ -198,4 +176,34 @@ void wifiSetup()
   mqttClient.setCredentials(MQTT_USER, MQTT_PASS);
 
   connectToWifi();
+}
+
+void ledStateSync()
+{
+  int brightnessConv = map(brightness, 3, 255, 1, 100);
+    char ledStateChar[8];
+    String state;
+    char message[30];
+    
+    if(ledState)
+    {
+      state = "true";
+    }
+    else
+    {
+      state = "false";
+    } 
+    
+    state.toCharArray(ledStateChar, 8);
+    
+    snprintf(
+      message,
+      30,
+      "%d,%ld,%s",
+      brightnessConv,
+      rgbval,
+      ledStateChar
+    );
+    
+    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message);
 }
