@@ -54,6 +54,9 @@ void onMqttConnect(bool sessionPresent) {
   mqttClient.subscribe("esp32/led", MQTT_QOS);
   mqttClient.subscribe("esp32/restart", MQTT_QOS);
   mqttClient.subscribe("esp32/sync", MQTT_QOS);
+  mqttClient.subscribe("esp32/ambient_light/switch", MQTT_QOS);
+  mqttClient.subscribe("esp32/ambient_light/brightness/set", MQTT_QOS);
+  mqttClient.subscribe("esp32/ambient_light/rgb/set", MQTT_QOS);
   
   char CUR_IP[20];
   snprintf(
@@ -160,6 +163,54 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     FastLEDshowESP32();
     ledStateSync();
   }
+
+  if (topicstr == "esp32/ambient_light/switch")
+  {
+    if (payloadstr == "true")
+    {
+      FastLED.setBrightness(brightness);
+      ledState = true;
+    }
+    else if (payloadstr== "false")
+    {
+      FastLED.setBrightness(0);
+      ledState = false;
+    }
+    FastLEDshowESP32();
+    ledStateSync();
+  }
+
+  if (topicstr == "esp32/ambient_light/brightness/set")
+  {
+    brightness = map(atoi(payload), 1, 100, 3, 255);
+    FastLED.setBrightness(brightness);
+    FastLEDshowESP32();
+    ledStateSync();
+  }
+
+  if (topicstr == "esp32/ambient_light/rgb/set")
+  {
+    char * strtokIndx;
+    byte R, G, B;
+    
+    strtokIndx = strtok(payload, ",");
+    R = atoi(strtokIndx);
+
+    strtokIndx = strtok(NULL, ",");
+    G = atoi(strtokIndx);
+
+    strtokIndx = strtok(NULL, ",");
+    B = atoi(strtokIndx);
+
+    rgbval = ((long)R << 16L) | ((long)G << 8L) | (long)B;
+
+    for (int i = 0; i < NUM_LEDS; i++) {
+      leds[i] = rgbval;
+    }
+    
+    FastLEDshowESP32();
+    ledStateSync();
+  }
 }
 
 void wifiSetup()
@@ -206,4 +257,20 @@ void ledStateSync()
     );
     
     mqttClient.publish("esp32/ledState", MQTT_QOS, false, message);
+
+    char brightnessChar[4];
+    char rgbvalChar[16];
+
+    byte red = rgbval >> 16;
+
+    byte green = (rgbval & 0x00ff00) >> 8;
+
+    byte blue = (rgbval & 0x0000ff);
+    
+    snprintf(brightnessChar, 4, "%d", brightnessConv);
+    snprintf(rgbvalChar, 16, "%d,%d,%d", red, green, blue);
+    
+    mqttClient.publish("esp32/ambient_light/status", MQTT_QOS, false, ledStateChar);
+    mqttClient.publish("esp32/ambient_light/brightness/status", MQTT_QOS, false, brightnessChar);
+    mqttClient.publish("esp32/ambient_light/rgb/status", MQTT_QOS, false, rgbvalChar);
 }
