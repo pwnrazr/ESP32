@@ -182,7 +182,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   if (topicstr == "esp32/ambient_light/brightness/set")
   {
-    brightness = map(atoi(payload), 1, 100, 3, 255);
+    brightness = map(payloadstr.toInt(), 1, 100, 3, 255);
     FastLED.setBrightness(brightness);
     FastLEDshowESP32();
     ledStateSync();
