@@ -35,6 +35,10 @@ unsigned long rgbval = 8900346;
 int brightness = 20;
 bool ledState = true;
 
+// Brightness fade
+byte otwBrightness; // Received brightness to fade to
+boolean fadeBrightness = false;
+
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
  *  then waits for a notification that it is done.
@@ -98,9 +102,28 @@ void ledsetup() {
   
 void ledloop()
 {
-  // Placeholder 
-
-  // do some periodic updates
-  //EVERY_N_MILLISECONDS( 20 ) { gHue++; } // slowly cycle the "base color" through the rainbow
-  //EVERY_N_SECONDS( 10 ) { nextPattern(); } // change patterns periodically
+  EVERY_N_MILLISECONDS(15)
+  {
+    if(fadeBrightness)
+    {
+      if(brightness != otwBrightness)
+      {
+        if(brightness > otwBrightness)
+        {
+          brightness--;
+          FastLED.setBrightness(brightness);
+        }
+        else if(brightness < otwBrightness)
+        {
+          brightness++;
+          FastLED.setBrightness(brightness);
+        }
+        FastLEDshowESP32();
+      }
+      else
+      {
+        fadeBrightness = false;
+      }
+    }
+  }
 }

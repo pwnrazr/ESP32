@@ -138,7 +138,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     char state[8];
 
     strtokIndx = strtok(payload, ",");
-    brightness = map(atoi(strtokIndx), 1, 100, 3, 255);
+    otwBrightness = map(atoi(strtokIndx), 1, 100, 3, 255);
 
     strtokIndx = strtok(NULL, ",");
     rgbval = atol(strtokIndx);
@@ -152,15 +152,19 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
     if (strcmp(state, "true") == 0)
     {
-      FastLED.setBrightness(brightness);
+      //FastLED.setBrightness(brightness);
+      fadeBrightness = true;
       ledState = true;
     }
     else if (strcmp(state, "false") == 0)
     {
-      FastLED.setBrightness(0);
+      //FastLED.setBrightness(0);
+      //FastLEDshowESP32();
+      otwBrightness = 0;
+      fadeBrightness = true;
       ledState = false;
     }
-    FastLEDshowESP32();
+    //FastLEDshowESP32();
     ledStateSync();
   }
 
@@ -168,7 +172,8 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if (payloadstr == "true")
     {
-      FastLED.setBrightness(brightness);
+      //FastLED.setBrightness(brightness);
+      fadeBrightness = true;
       ledState = true;
     }
     else if (payloadstr== "false")
