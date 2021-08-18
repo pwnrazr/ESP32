@@ -27,7 +27,11 @@ CRGB leds[NUM_LEDS];
 // -- The core to run FastLED.show()
 #define FASTLED_SHOW_CORE 1
 
-#define START_COLOR 8900346
+#define START_COLOR 8900346 // 135, 206, 250
+#define START_COLOR_R 135
+#define START_COLOR_G 206
+#define START_COLOR_B 250
+
 #define START_BRIGHTNESS 20
 
 // -- Task handles for use in the notifications
@@ -44,9 +48,9 @@ byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
 // Color fade
-byte curR;
-byte curG;
-byte curB;
+byte curR = START_COLOR_R;
+byte curG = START_COLOR_G;
+byte curB = START_COLOR_B;
 
 byte otwR;
 byte otwG;
