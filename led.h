@@ -22,8 +22,6 @@ FASTLED_USING_NAMESPACE
 #define NUM_LEDS    45
 CRGB leds[NUM_LEDS];
 
-#define FRAMES_PER_SECOND  120
-
 // -- The core to run FastLED.show()
 #define FASTLED_SHOW_CORE 1
 
