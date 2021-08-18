@@ -161,35 +161,43 @@ void ledloop()
   {
     if(fadeColor)
     {
-      if(curR != otwR || curG != otwG || curB != otwG)
+      if(curR != otwR)
       {
-        if(curR > otwR)
+        if(curR >= otwR)
         {
           curR--;
         }
-        else if(curR < otwR)
+        else if(curR <= otwR)
         {
           curR++;
         }
-        if(curG > otwG)
+      }
+      
+      if(curG != otwG)
+      {
+        if(curG >= otwG)
         {
           curG--;
         }
-        else if(curG < otwG)
+        else if(curG <= otwG)
         {
           curG++;
         }
-        if(curB > otwB)
+      }
+      
+      if(curB != otwB)
+      {
+        if(curB >= otwB)
         {
           curB--;
         }
-        else if(curB < otwB)
+        else if(curB <= otwB)
         {
           curB++;
         }
-        setColor(curR, curG, curB);
       }
-      else
+      setColor(curR, curG, curB);
+      if(curR == otwR && curG == otwG && curB == otwB)
       {
         fadeColor = false;
       }
