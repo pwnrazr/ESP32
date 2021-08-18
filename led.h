@@ -124,10 +124,8 @@ void ledsetup() {
 
   // -- Create the FastLED show task
   xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
-  for(int i = 0; i < NUM_LEDS; i++) {
-    leds[i] = rgbval;
-  }
-  FastLEDshowESP32();
+  
+  setColor(curR, curG, curB);
 }
   
 void ledloop()
