@@ -42,8 +42,8 @@ unsigned long rgbval = START_COLOR;
 bool ledState = true;
 
 // Brightness fade
-byte trueBrightness = START_BRIGHTNESS;
-int brightness = START_BRIGHTNESS;
+byte trueBrightness = START_BRIGHTNESS; // Actual set brightness for sync to HA and GoogleHome
+int brightness = START_BRIGHTNESS;      // Stores current brightness when fading
 byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
@@ -52,7 +52,7 @@ byte curR = START_COLOR_R;
 byte curG = START_COLOR_G;
 byte curB = START_COLOR_B;
 
-byte otwR;
+byte otwR;  // Received color to fade to
 byte otwG;
 byte otwB;
 
