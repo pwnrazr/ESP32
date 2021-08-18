@@ -138,12 +138,12 @@ void ledloop()
     {
       if(brightness != otwBrightness)
       {
-        if(brightness > otwBrightness)
+        if(brightness >= otwBrightness)
         {
           brightness--;
           FastLED.setBrightness(brightness);
         }
-        else if(brightness < otwBrightness)
+        else if(brightness <= otwBrightness)
         {
           brightness++;
           FastLED.setBrightness(brightness);
