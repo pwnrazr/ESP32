@@ -145,16 +145,28 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
     strtokIndx = strtok(NULL, ",");
     strcpy(state, strtokIndx);
-
+    /*
     for (int i = 0; i < NUM_LEDS; i++) {
       leds[i] = rgbval;
-    }
+    }*/
 
+    trueR = rgbval >> 16 ;
+
+    trueG = (rgbval & 0x00ff00) >> 8;
+    
+    trueB = (rgbval & 0x0000ff);
+    
     if (strcmp(state, "true") == 0)
     {
       //FastLED.setBrightness(brightness);
       otwBrightness = trueBrightness;
       fadeBrightness = true;
+
+      otwR = trueR;
+      otwG = trueG;
+      otwB = trueB;
+      
+      fadeColor = true;
       ledState = true;
     }
     else if (strcmp(state, "false") == 0)

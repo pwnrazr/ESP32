@@ -43,6 +43,21 @@ int brightness = START_BRIGHTNESS;
 byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
+// Color fade
+byte trueR;
+byte trueG;
+byte trueB;
+
+byte curR;
+byte curG;
+byte curB;
+
+byte otwR;
+byte otwG;
+byte otwB;
+
+boolean fadeColor = false;
+
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
  *  then waits for a notification that it is done.
@@ -80,6 +95,17 @@ void FastLEDshowTask(void *pvParameters)
     // -- Notify the calling task
     xTaskNotifyGive(userTaskHandle);
   }
+}
+
+void setColor(byte inR, byte inG, byte inB)
+{
+  for (int i = 0; i < NUM_LEDS; i++) 
+  {
+    leds[i].red = inR;
+    leds[i].green = inG;
+    leds[i].blue = inB;
+  }
+  FastLEDshowESP32();
 }
 
 void ledsetup() {
@@ -127,6 +153,45 @@ void ledloop()
       else
       {
         fadeBrightness = false;
+      }
+    }
+  }
+
+  EVERY_N_MILLISECONDS(5)
+  {
+    if(fadeColor)
+    {
+      if(curR != otwR || curG != otwG || curB != otwG)
+      {
+        if(curR > otwR)
+        {
+          curR--;
+        }
+        else if(curR < otwR)
+        {
+          curR++;
+        }
+        if(curG > otwG)
+        {
+          curG--;
+        }
+        else if(curG < otwG)
+        {
+          curG++;
+        }
+        if(curB > otwB)
+        {
+          curB--;
+        }
+        else if(curB < otwB)
+        {
+          curB++;
+        }
+        setColor(curR, curG, curB);
+      }
+      else
+      {
+        fadeColor = false;
       }
     }
   }
