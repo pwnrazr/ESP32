@@ -185,8 +185,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   {
     if (payloadstr == "true")
     {
-      //FastLED.setBrightness(brightness);
-      fadeBrightness = true;
+      FastLED.setBrightness(brightness);
       ledState = true;
     }
     else if (payloadstr== "false")
