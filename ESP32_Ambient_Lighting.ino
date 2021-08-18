@@ -5,9 +5,9 @@
 void setup()
 {
   Serial.begin(115200);
-  ledsetup();
   wifiSetup();
   otaSetup();
+  ledsetup();
 
   pinMode(roomclock_pin, OUTPUT);
   digitalWrite(roomclock_pin, HIGH);
