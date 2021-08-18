@@ -44,10 +44,6 @@ byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
 // Color fade
-byte trueR;
-byte trueG;
-byte trueB;
-
 byte curR;
 byte curG;
 byte curB;

@@ -150,11 +150,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       leds[i] = rgbval;
     }*/
 
-    trueR = rgbval >> 16 ;
+    byte R = rgbval >> 16 ;
 
-    trueG = (rgbval & 0x00ff00) >> 8;
+    byte G = (rgbval & 0x00ff00) >> 8;
     
-    trueB = (rgbval & 0x0000ff);
+    byte B = (rgbval & 0x0000ff);
     
     if (strcmp(state, "true") == 0)
     {
@@ -162,9 +162,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
       otwBrightness = trueBrightness;
       fadeBrightness = true;
 
-      otwR = trueR;
-      otwG = trueG;
-      otwB = trueB;
+      otwR = R;
+      otwG = G;
+      otwB = B;
       
       fadeColor = true;
       ledState = true;
