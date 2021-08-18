@@ -138,7 +138,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     char state[8];
 
     strtokIndx = strtok(payload, ",");
-    otwBrightness = map(atoi(strtokIndx), 1, 100, 3, 255);
+    trueBrightness = map(atoi(strtokIndx), 1, 100, 3, 255);
 
     strtokIndx = strtok(NULL, ",");
     rgbval = atol(strtokIndx);
@@ -153,6 +153,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     if (strcmp(state, "true") == 0)
     {
       //FastLED.setBrightness(brightness);
+      otwBrightness = trueBrightness;
       fadeBrightness = true;
       ledState = true;
     }
@@ -236,7 +237,7 @@ void wifiSetup()
 
 void ledStateSync()
 {
-  int brightnessConv = map(brightness, 3, 255, 1, 100);
+    int brightnessConv = map(trueBrightness, 3, 255, 1, 100);
     char ledStateChar[8];
     String state;
     char message[30];

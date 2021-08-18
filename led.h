@@ -27,15 +27,19 @@ CRGB leds[NUM_LEDS];
 // -- The core to run FastLED.show()
 #define FASTLED_SHOW_CORE 1
 
+#define START_COLOR 8900346
+#define START_BRIGHTNESS 20
+
 // -- Task handles for use in the notifications
 static TaskHandle_t FastLEDshowTaskHandle = 0;
 static TaskHandle_t userTaskHandle = 0;
 
-unsigned long rgbval = 8900346;
-int brightness = 20;
+unsigned long rgbval = START_COLOR;
 bool ledState = true;
 
 // Brightness fade
+byte trueBrightness = START_BRIGHTNESS;
+int brightness = START_BRIGHTNESS;
 byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
@@ -86,7 +90,7 @@ void ledsetup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
   // set master brightness control
-  FastLED.setBrightness(brightness);
+  FastLED.setBrightness(trueBrightness);
 
   int core = xPortGetCoreID();
   //Serial.print("Main code running on core ");
