@@ -41,7 +41,7 @@ bool ledState = true;
 
 // Brightness fade
 byte trueBrightness = START_BRIGHTNESS; // Actual set brightness for sync to HA and GoogleHome
-int brightness = START_BRIGHTNESS;      // Stores current brightness when fading
+int curBrightness = START_BRIGHTNESS;      // Stores current brightness when fading
 byte otwBrightness; // Received brightness to fade to
 boolean fadeBrightness = false;
 
@@ -132,17 +132,17 @@ void ledloop()
   {
     if(fadeBrightness)
     {
-      if(brightness != otwBrightness)
+      if(curBrightness != otwBrightness)
       {
-        if(brightness >= otwBrightness)
+        if(curBrightness >= otwBrightness)
         {
-          brightness--;
-          FastLED.setBrightness(brightness);
+          curBrightness--;
+          FastLED.setBrightness(curBrightness);
         }
-        else if(brightness <= otwBrightness)
+        else if(curBrightness <= otwBrightness)
         {
-          brightness++;
-          FastLED.setBrightness(brightness);
+          curBrightness++;
+          FastLED.setBrightness(curBrightness);
         }
         FastLEDshowESP32();
       }
