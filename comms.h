@@ -45,11 +45,6 @@ void WiFiEvent(WiFiEvent_t event) {
 }
 
 void onMqttConnect(bool sessionPresent) {
-  /*
-    mqttClient.subscribe("esp32/beepamount", 2);
-    mqttClient.subscribe("esp32/forcestopbeep", 2);
-  */
-
   mqttClient.subscribe("esp32/clock", MQTT_QOS);
   mqttClient.subscribe("esp32/led", MQTT_QOS);
   mqttClient.subscribe("esp32/restart", MQTT_QOS);
@@ -131,7 +126,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
   }
 
-  if (topicstr == "esp32/led")
+  if (topicstr == "esp32/led")  // For Google Home
   {
     char * strtokIndx;
 
@@ -173,7 +168,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/switch")
+  if (topicstr == "esp32/ambient_light/switch")   // Home Assistant
   {
     if (payloadstr == "true")
     {
@@ -191,7 +186,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/brightness/set")
+  if (topicstr == "esp32/ambient_light/brightness/set") // Home Assistant
   {
     trueBrightness = map(payloadstr.toInt(), 1, 100, 3, 255);
     otwBrightness = trueBrightness;
@@ -199,7 +194,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/rgb/set")
+  if (topicstr == "esp32/ambient_light/rgb/set")  // Home Assistant
   {
     char * strtokIndx;
     byte R, G, B;
@@ -267,7 +262,7 @@ void ledStateSync()
       ledStateChar
     );
     
-    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message);
+    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message); // To Google Home
 
     char brightnessChar[4];
     char rgbvalChar[16];
@@ -280,7 +275,8 @@ void ledStateSync()
     
     snprintf(brightnessChar, 4, "%d", brightnessConv);
     snprintf(rgbvalChar, 16, "%d,%d,%d", red, green, blue);
-    
+
+    // To Home Assistant
     mqttClient.publish("esp32/ambient_light/status", MQTT_QOS, false, ledStateChar);
     mqttClient.publish("esp32/ambient_light/brightness/status", MQTT_QOS, false, brightnessChar);
     mqttClient.publish("esp32/ambient_light/rgb/status", MQTT_QOS, false, rgbvalChar);

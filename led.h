@@ -2,21 +2,11 @@
 
 FASTLED_USING_NAMESPACE
 
-// FastLED "100-lines-of-code" demo reel, showing just a few 
-// of the kinds of animation patterns you can quickly and easily 
-// compose using FastLED.  
-//
-// This example also shows one easy way to define multiple 
-// animations patterns and have them automatically rotate.
-//
-// -Mark Kriegsman, December 2014
-
 #if defined(FASTLED_VERSION) && (FASTLED_VERSION < 3001000)
 #warning "Requires FastLED 3.1 or later; check github for latest code."
 #endif
 
 #define DATA_PIN    25
-//#define CLK_PIN   4
 #define LED_TYPE    WS2812B
 #define COLOR_ORDER GRB
 #define NUM_LEDS    45
@@ -41,8 +31,8 @@ bool ledState = true;
 
 // Brightness fade
 byte trueBrightness = START_BRIGHTNESS; // Actual set brightness for sync to HA and GoogleHome
-int curBrightness = START_BRIGHTNESS;      // Stores current brightness when fading
-byte otwBrightness; // Received brightness to fade to
+int curBrightness = START_BRIGHTNESS;   // Stores current brightness when fading
+byte otwBrightness;                     // Received brightness to fade to
 boolean fadeBrightness = false;
 
 // Color fade
@@ -57,7 +47,7 @@ byte otwB;
 boolean fadeColor = false;
 
 /** show() for ESP32
- *  Call this function instead of FastLED.show(). It signals core 0 to issue a show, 
+ *  Call this function instead of FastLED.show(). It signals core FASTLED_SHOW_CORE to issue a show, 
  *  then waits for a notification that it is done.
  */
 void FastLEDshowESP32()
@@ -78,7 +68,7 @@ void FastLEDshowESP32()
 }
 
 /** show Task
- *  This function runs on core 0 and just waits for requests to call FastLED.show()
+ *  This function runs on core FASTLED_SHOW_CORE and just waits for requests to call FastLED.show()
  */
 void FastLEDshowTask(void *pvParameters)
 {
@@ -107,13 +97,11 @@ void setColor(byte inR, byte inG, byte inB)
 }
 
 void ledsetup() {
-  //delay(3000); // 3 second delay for recovery
-  
   // tell FastLED about the LED strip configuration
   FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
-  // set master brightness control
+  // LED brightness on startup
   FastLED.setBrightness(trueBrightness);
 
   int core = xPortGetCoreID();
@@ -123,7 +111,7 @@ void ledsetup() {
   // -- Create the FastLED show task
   xTaskCreatePinnedToCore(FastLEDshowTask, "FastLEDshowTask", 2048, NULL, 2, &FastLEDshowTaskHandle, FASTLED_SHOW_CORE);
   
-  setColor(curR, curG, curB);
+  setColor(curR, curG, curB); // Sets starting led color
 }
   
 void ledloop()
