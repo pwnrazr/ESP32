@@ -66,7 +66,6 @@ void onMqttConnect(bool sessionPresent) {
 
   mqttClient.publish("esp32/connect", MQTT_QOS, false, CUR_IP);  // Publish IP on connect
   mqttClient.publish("esp32/clockState", MQTT_QOS, false, "true");  // Publish clock state as ON
-  mqttClient.publish("esp32/ledState", MQTT_QOS, false, "10,8900346,true");  // Publish ledState as set color
 }
 
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
