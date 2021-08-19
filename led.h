@@ -120,7 +120,7 @@ void ledsetup() {
   //FastLED.addLeds<LED_TYPE,DATA_PIN,CLK_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
   // LED brightness on startup
-  FastLED.setBrightness(trueBrightness);
+  FastLED.setBrightness(pgm_read_byte(&gamma8[map(START_BRIGHTNESS, 1, 255, 73, 255)]));
 
   int core = xPortGetCoreID();
   //Serial.print("Main code running on core ");
