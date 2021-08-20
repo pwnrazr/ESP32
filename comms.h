@@ -252,22 +252,5 @@ void ledStateSync()
       ledStateChar
     );
     
-    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message); // To Google Home
-
-    char brightnessChar[4];
-    char rgbvalChar[16];
-
-    byte red = rgbval >> 16;
-
-    byte green = (rgbval & 0x00ff00) >> 8;
-
-    byte blue = (rgbval & 0x0000ff);
-    
-    snprintf(brightnessChar, 4, "%d", brightnessConv);
-    snprintf(rgbvalChar, 16, "%d,%d,%d", red, green, blue);
-
-    // To Home Assistant
-    mqttClient.publish("esp32/ambient_light/status", MQTT_QOS, false, ledStateChar);
-    mqttClient.publish("esp32/ambient_light/brightness/status", MQTT_QOS, false, brightnessChar);
-    mqttClient.publish("esp32/ambient_light/rgb/status", MQTT_QOS, false, rgbvalChar);
+    mqttClient.publish("esp32/ledState", MQTT_QOS, false, message); // For Google Home and HomeAssistant(requires node-red to convert values)
 }
