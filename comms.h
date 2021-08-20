@@ -188,7 +188,9 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   if (strcmp((char*)topic, "esp32/ambient_light/brightness/set") == 0) // Home Assistant
   {
-    trueBrightness = map(payloadstr.toInt(), 1, 100, 1, 255);
+    char buffer[3];
+    strncpy(buffer, payload, len);
+    trueBrightness = map(atoi(buffer), 1, 100, 1, 255);
     otwBrightness = trueBrightness;
     fadeBrightness = true;
     ledStateSync();
