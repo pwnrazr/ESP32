@@ -49,7 +49,7 @@ bool ledState = true;
 
 // Brightness fade
 byte trueBrightness = START_BRIGHTNESS; // Actual set brightness for sync to HA and GoogleHome
-int curBrightness = START_BRIGHTNESS;   // Stores current brightness when fading
+byte curBrightness = START_BRIGHTNESS;   // Stores current brightness when fading
 byte otwBrightness;                     // Received brightness to fade to
 boolean fadeBrightness = false;
 
