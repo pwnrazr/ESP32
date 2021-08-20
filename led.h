@@ -134,7 +134,7 @@ void ledsetup() {
   
 void ledloop()
 {
-  EVERY_N_MILLISECONDS(15)
+  EVERY_N_MILLISECONDS(10)
   {
     if(fadeBrightness)
     {
