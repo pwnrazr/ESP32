@@ -177,26 +177,12 @@ void ledloop()
       {
         if(curBrightness >= otwBrightness)
         {
-          if((curBrightness - 1) < otwBrightness)
-          {
-            curBrightness = otwBrightness;
-          }
-          else
-          {
-            curBrightness--;
-          }
+          curBrightness--;
           FastLED.setBrightness(pgm_read_byte(&gamma8[map(curBrightness, 1, 255, 66, 255)]));
         }
         else if(curBrightness <= otwBrightness)
         {
-          if((curBrightness + 1) > otwBrightness)
-          {
-            curBrightness = otwBrightness;
-          }
-          else
-          {
-            curBrightness++;
-          }
+          curBrightness++;
           FastLED.setBrightness(pgm_read_byte(&gamma8[map(curBrightness, 1, 255, 66, 255)]));
         }
         FastLEDshowESP32();
