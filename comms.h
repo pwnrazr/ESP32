@@ -78,19 +78,6 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
 
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
-  String topicstr;
-  String payloadstr;
-
-  for (int i = 0; i < len; i++)
-  {
-    payloadstr = String(payloadstr + (char)payload[i]);  //convert payload to string
-  }
-
-  for (int i = 0; i <= 50; i++)
-  {
-    topicstr = String(topicstr + (char)topic[i]);  //convert topic to string
-  }
-
   /* BEGIN PROCESSING PAYLOAD AND TOPIC */
   if(strcmp((char*)topic, "esp32/restart") == 0)
   {
