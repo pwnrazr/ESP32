@@ -92,12 +92,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   }
 
   /* BEGIN PROCESSING PAYLOAD AND TOPIC */
-  if(topicstr == "esp32/restart")
+  if(strcmp((char*)topic, "esp32/restart") == 0)
   {
     ESP.restart();
   }
 
-  if (topicstr == "esp32/sync")
+  if (strcmp((char*)topic, "esp32/sync") == 0)
   {
     if(digitalRead(roomclock_pin) == HIGH)
     {
@@ -111,7 +111,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
   
-  if (topicstr == "esp32/clock")
+  if (strcmp((char*)topic, "esp32/clock") == 0)
   {
     if (payloadstr == "true")
     {
@@ -125,7 +125,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     }
   }
 
-  if (topicstr == "esp32/led")  // For Google Home
+  if (strcmp((char*)topic, "esp32/led") == 0)  // For Google Home
   {
     char * strtokIndx;
 
@@ -168,7 +168,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/switch")   // Home Assistant
+  if (strcmp((char*)topic, "esp32/ambient_light/switch") == 0)   // Home Assistant
   {
     if (payloadstr == "true")
     {
@@ -186,7 +186,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/brightness/set") // Home Assistant
+  if (strcmp((char*)topic, "esp32/ambient_light/brightness/set") == 0) // Home Assistant
   {
     trueBrightness = map(payloadstr.toInt(), 1, 100, 1, 255);
     otwBrightness = trueBrightness;
@@ -194,7 +194,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     ledStateSync();
   }
 
-  if (topicstr == "esp32/ambient_light/rgb/set")  // Home Assistant
+  if (strcmp((char*)topic, "esp32/ambient_light/rgb/set") == 0)  // Home Assistant
   {
     char * strtokIndx;
     byte R, G, B;
