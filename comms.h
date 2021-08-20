@@ -124,7 +124,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     strtokIndx = strtok(NULL, ",");
     rgbval = atol(strtokIndx);
 
-    strtokIndx = strtok(NULL, ",");
+    strtokIndx = strtok(NULL, "\0");
     strcpy(state, strtokIndx);
 
     byte R = rgbval >> 16 ;
@@ -194,7 +194,7 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     strtokIndx = strtok(NULL, ",");
     G = atoi(strtokIndx);
 
-    strtokIndx = strtok(NULL, ",");
+    strtokIndx = strtok(NULL, "\0");
     B = atoi(strtokIndx);
 
     rgbval = ((long)R << 16L) | ((long)G << 8L) | (long)B;
