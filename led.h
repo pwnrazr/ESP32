@@ -51,7 +51,7 @@ bool ledState = true;
 byte trueBrightness = START_BRIGHTNESS; // Actual set brightness for sync to HA and GoogleHome
 byte curBrightness = START_BRIGHTNESS;   // Stores current brightness when fading
 byte otwBrightness;                     // Received brightness to fade to
-boolean fadeBrightness = false;
+bool fadeBrightness = false;
 
 // Color fade
 byte curR = START_COLOR_R;
@@ -64,7 +64,7 @@ int stepsB;
 
 unsigned int loopCount = 0;
 
-boolean fadeColor = false;
+bool fadeColor = false;
 
 /** show() for ESP32
  *  Call this function instead of FastLED.show(). It signals core FASTLED_SHOW_CORE to issue a show, 
