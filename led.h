@@ -58,9 +58,11 @@ byte curR = START_COLOR_R;
 byte curG = START_COLOR_G;
 byte curB = START_COLOR_B;
 
-byte otwR;  // Received color to fade to
-byte otwG;
-byte otwB;
+int stepsR;
+int stepsG;
+int stepsB;
+
+unsigned int loopCount = 0;
 
 boolean fadeColor = false;
 
@@ -131,7 +133,40 @@ void ledsetup() {
   
   setColor(curR, curG, curB); // Sets starting led color
 }
+
+int calculateSteps(byte colCur, byte colOtw)
+{
+  int stepus = colOtw - colCur;
+  if(stepus){
+    stepus = 1020/stepus;
+  }
+  return stepus;
+}
+
+int calculateVal(int step, int current, int i)
+{
+  if(step && i % step == 0)  // if step is non-zero
+  {
+    if(step > 0) 
+    {
+      current += 1;
+    }
+    else if(step < 0)
+    {
+      current -= 1;
+    }
+  }
+
+  if (current > 255) {
+        current = 255;
+    }
+    else if (current < 0) {
+        current = 0;
+    }
   
+  return current;
+}
+
 void ledloop()
 {
   EVERY_N_MILLISECONDS(10)
@@ -173,47 +208,20 @@ void ledloop()
     }
   }
 
-  EVERY_N_MILLISECONDS(5)
+  EVERY_N_MILLISECONDS(1)
   {
     if(fadeColor)
     {
-      if(curR != otwR)
+      if(loopCount <= 1020)
       {
-        if(curR >= otwR)
-        {
-          curR--;
-        }
-        else if(curR <= otwR)
-        {
-          curR++;
-        }
+        curR = calculateVal(stepsR, curR, loopCount);
+        curG = calculateVal(stepsG, curG, loopCount);
+        curB = calculateVal(stepsB, curB, loopCount);
+        
+        setColor(curR, curG, curB);
+        loopCount++;
       }
-      
-      if(curG != otwG)
-      {
-        if(curG >= otwG)
-        {
-          curG--;
-        }
-        else if(curG <= otwG)
-        {
-          curG++;
-        }
-      }
-      
-      if(curB != otwB)
-      {
-        if(curB >= otwB)
-        {
-          curB--;
-        }
-        else if(curB <= otwB)
-        {
-          curB++;
-        }
-      }
-      setColor(curR, curG, curB);
-      if(curR == otwR && curG == otwG && curB == otwB)
+      else
       {
         fadeColor = false;
       }

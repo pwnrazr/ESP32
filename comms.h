@@ -150,11 +150,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     {
       otwBrightness = trueBrightness;
       fadeBrightness = true;
-
-      otwR = R;
-      otwG = G;
-      otwB = B;
       
+      loopCount = 0;
+      stepsR = calculateSteps(curR, R);
+      stepsG = calculateSteps(curG, G);
+      stepsB = calculateSteps(curB, B);
+
       fadeColor = true;
       ledState = true;
     }
@@ -208,10 +209,11 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
     B = atoi(strtokIndx);
 
     rgbval = ((long)R << 16L) | ((long)G << 8L) | (long)B;
-
-    otwR = R;
-    otwG = G;
-    otwB = B;
+    
+    loopCount = 0;
+    stepsR = calculateSteps(curR, R);
+    stepsG = calculateSteps(curG, G);
+    stepsB = calculateSteps(curB, B);
     fadeColor = true;
     
     ledStateSync();
