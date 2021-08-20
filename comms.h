@@ -113,12 +113,12 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
   
   if (strcmp((char*)topic, "esp32/clock") == 0)
   {
-    if (payloadstr == "true")
+    if (strncmp((char*)payload, "true", len) == 0)
     {
       digitalWrite(roomclock_pin, HIGH);
       mqttClient.publish("esp32/clockState", MQTT_QOS, false, "true");
     }
-    else if (payloadstr == "false")
+    else if (strncmp((char*)payload, "false", len) == 0)
     {
       digitalWrite(roomclock_pin, LOW);
       mqttClient.publish("esp32/clockState", MQTT_QOS, false, "false");
@@ -170,13 +170,13 @@ void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties 
 
   if (strcmp((char*)topic, "esp32/ambient_light/switch") == 0)   // Home Assistant
   {
-    if (payloadstr == "true")
+    if (strncmp((char*)payload, "true", len) == 0)
     {
       otwBrightness = trueBrightness;
       fadeBrightness = true;
       ledState = true;
     }
-    else if (payloadstr== "false")
+    else if (strncmp((char*)payload, "false", len) == 0)
     {
       otwBrightness = 0;
       fadeBrightness = true;
