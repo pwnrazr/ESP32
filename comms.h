@@ -228,20 +228,17 @@ void wifiSetup()
 void ledStateSync()
 {
     byte brightnessConv = map(trueBrightness, 1, 255, 1, 100);
-    char ledStateChar[8];
-    String state;
+    char ledStateChar[6];
     char message[30];
     
     if(ledState)
     {
-      state = "true";
+      strcpy(ledStateChar, "true");
     }
     else
     {
-      state = "false";
-    } 
-    
-    state.toCharArray(ledStateChar, 8);
+      strcpy(ledStateChar, "false");
+    }
     
     snprintf(
       message,
