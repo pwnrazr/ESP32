@@ -36,22 +36,22 @@ void loop()
   
   EVERY_N_SECONDS(3)
   {
-    char eco2Char[10];
-    char tvocChar[10];
-    char h2Char[10];
-    char ethChar[10];
-    char temperatureChar[10];
-    char humidityChar[10];
-    
-    sprintf(temperatureChar, "%lf", temperature);
-    sprintf(humidityChar, "%lf", humidity);
-    itoa(eco2, eco2Char, 10);
-    itoa(tvoc, tvocChar, 10);
-    itoa(h2, h2Char, 10);
-    itoa(eth, ethChar, 10);
-    
     if(sgpReady)
     {
+      char eco2Char[10];
+      char tvocChar[10];
+      char h2Char[10];
+      char ethChar[10];
+      char temperatureChar[10];
+      char humidityChar[10];
+      
+      sprintf(temperatureChar, "%lf", temperature);
+      sprintf(humidityChar, "%lf", humidity);
+      itoa(eco2, eco2Char, 10);
+      itoa(tvoc, tvocChar, 10);
+      itoa(h2, h2Char, 10);
+      itoa(eth, ethChar, 10);
+    
       mqttClient.publish("esp32/sensor/eco2", MQTT_QOS, false, eco2Char);
       mqttClient.publish("esp32/sensor/tvoc", MQTT_QOS, false, tvocChar);
       mqttClient.publish("esp32/sensor/h2", MQTT_QOS, false, h2Char);
