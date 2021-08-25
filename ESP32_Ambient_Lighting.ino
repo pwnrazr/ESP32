@@ -34,38 +34,38 @@ void loop()
     mqttClient.publish("esp32/heartbeat", MQTT_QOS, false, "Hi");
   }
   
-  EVERY_N_SECONDS(5)
+  EVERY_N_SECONDS(3)
   {
-    sgp30.measureAirQuality();
-    
-    sensors_event_t rh, temp;
-    aht.getEvent(&rh, &temp);// populate temp and humidity objects with fresh data
-
-    //Serial.print(sgp30.CO2);
-    //Serial.print(sgp30.TVOC);
-    //temp.temperature
-    //humidity.relative_humidity
-    
-    char eco2[6];
-    char tvoc[6];
+    char eco2Char[10];
+    char tvocChar[10];
+    char h2Char[10];
+    char ethChar[10];
     char temperatureChar[10];
     char humidityChar[10];
     
-    float temperature = temp.temperature;
-    float humidity = rh.relative_humidity;
-
     sprintf(temperatureChar, "%lf", temperature);
     sprintf(humidityChar, "%lf", humidity);
-    itoa(sgp30.CO2, eco2, 10);
-    itoa(sgp30.TVOC, tvoc, 10);
+    itoa(eco2, eco2Char, 10);
+    itoa(tvoc, tvocChar, 10);
+    itoa(h2, h2Char, 10);
+    itoa(eth, ethChar, 10);
     
-    mqttClient.publish("esp32/sensor/eco2", MQTT_QOS, false, eco2);
-    mqttClient.publish("esp32/sensor/tvoc", MQTT_QOS, false, tvoc);
-    mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
-    mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
+    if(sgpReady)
+    {
+      mqttClient.publish("esp32/sensor/eco2", MQTT_QOS, false, eco2Char);
+      mqttClient.publish("esp32/sensor/tvoc", MQTT_QOS, false, tvocChar);
+      mqttClient.publish("esp32/sensor/h2", MQTT_QOS, false, h2Char);
+      mqttClient.publish("esp32/sensor/ethanol", MQTT_QOS, false, ethChar);
+      mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
+      mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
+    }
+    else
+    {
+      mqttClient.publish("esp32", MQTT_QOS, false, "NOT READY");
+    }
   }
   
   ArduinoOTA.handle();
   ledloop();
-  //sensorloop();
+  sensorloop();
 }
