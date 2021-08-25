@@ -6,8 +6,10 @@ Adafruit_SGP30 sgp;
 
 //  sgp30
 int eco2, tvoc, h2, eth;
+uint16_t TVOC_base, eCO2_base;
 byte sgpCount = 0;
 bool sgpReady = false;   // For 15 second initial warmup
+bool baselineReady = false;
 
 // aht10
 sensors_event_t rh, temp;
@@ -59,8 +61,8 @@ void sensorloop()
     {
       sgpReady = true;
       sgpCount = 0;
-
-      // get baseline placeholder
+      sgp.getIAQBaseline(&eCO2_base, &TVOC_base);
+      baselineReady = true;
     }
   }
 }

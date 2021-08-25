@@ -58,6 +58,20 @@ void loop()
       mqttClient.publish("esp32/sensor/ethanol", MQTT_QOS, false, ethChar);
       mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
       mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
+
+      if(baselineReady)
+      {
+        char eco2BaselineChar[10];
+        char tvocBaselineChar[10];
+
+        itoa(eCO2_base, eco2BaselineChar, 10);
+        itoa(TVOC_base, tvocBaselineChar, 10);
+        
+        mqttClient.publish("esp32/sensor/eco2Baseline", MQTT_QOS, false, eco2BaselineChar);
+        mqttClient.publish("esp32/sensor/tvocBaseline", MQTT_QOS, false, tvocBaselineChar);
+
+        baselineReady = false;
+      }
     }
     else
     {
