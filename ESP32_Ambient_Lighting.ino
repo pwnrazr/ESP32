@@ -45,8 +45,8 @@ void loop()
       char temperatureChar[10];
       char humidityChar[10];
       
-      snprintf(temperatureChar, 10, "%f", temperature);
-      snprintf(humidityChar, 10, "%f", humidity);
+      snprintf(temperatureChar, 10, "%.2f", temperature);
+      snprintf(humidityChar, 10, "%.2f", humidity);
       itoa(eco2, eco2Char, 10);
       itoa(tvoc, tvocChar, 10);
       itoa(h2, h2Char, 10);
