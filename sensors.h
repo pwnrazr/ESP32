@@ -32,7 +32,7 @@ void sensorSetup()
   sgp.begin();
 
   // If you have a baseline measurement from before you can assign it to start, to 'self-calibrate'
-  //sgp.setIAQBaseline(0x8E68, 0x8F41);  // Will vary for each sensor!
+  sgp.setIAQBaseline(0x925E, 0x926E);  // Will vary for each sensor!
 }
 
 void sensorloop()
