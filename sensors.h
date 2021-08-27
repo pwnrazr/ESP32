@@ -15,6 +15,13 @@ bool baselineReady = false;
 sensors_event_t rh, temp;
 float humidity, temperature;
 
+// Dust Sensor
+#define DUST_ADDR 8
+union u_tag {
+   float density; 
+   byte density_byte[4];
+} u;
+
 /* return absolute humidity [mg/m^3] with approximation formula
 * @param temperature [°C]
 * @param humidity [%RH]
@@ -35,16 +42,12 @@ void sensorSetup()
   sgp.setIAQBaseline(37644, 37704);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
 }
 
-union u_tag {
-   float density; 
-   byte density_byte[4];
-} u;
-
 void sensorloop()
 {
   EVERY_N_SECONDS(3)
   {
-    Wire.requestFrom(8, 4);
+    // Request dust sensor data from arduino nano
+    Wire.requestFrom(DUST_ADDR, 4);
     if(Wire.available() == 4)
     {
       for(byte i = 0; i <= 4; i++)
