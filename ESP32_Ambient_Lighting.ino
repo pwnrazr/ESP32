@@ -44,9 +44,11 @@ void loop()
       char ethChar[10];
       char temperatureChar[10];
       char humidityChar[10];
+      char dustChar[10];
       
       snprintf(temperatureChar, 10, "%.2f", temperature);
       snprintf(humidityChar, 10, "%.2f", humidity);
+      snprintf(dustChar, 10, "%.2f", u.density);
       itoa(eco2, eco2Char, 10);
       itoa(tvoc, tvocChar, 10);
       itoa(h2, h2Char, 10);
@@ -58,7 +60,8 @@ void loop()
       mqttClient.publish("esp32/sensor/ethanol", MQTT_QOS, false, ethChar);
       mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
       mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
-
+      mqttClient.publish("esp32/sensor/dust", MQTT_QOS, false, dustChar);
+      
       if(baselineReady)
       {
         char eco2BaselineChar[10];
