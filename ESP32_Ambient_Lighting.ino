@@ -34,54 +34,6 @@ void loop()
     mqttClient.publish("esp32/heartbeat", MQTT_QOS, false, "Hi");
   }
   
-  EVERY_N_SECONDS(3)
-  {
-    if(sgpReady)
-    {
-      char eco2Char[10];
-      char tvocChar[10];
-      char h2Char[10];
-      char ethChar[10];
-      char temperatureChar[10];
-      char humidityChar[10];
-      char dustChar[10];
-      
-      snprintf(temperatureChar, 10, "%.2f", temperature);
-      snprintf(humidityChar, 10, "%.2f", humidity);
-      snprintf(dustChar, 10, "%.2f", u.density);
-      itoa(eco2, eco2Char, 10);
-      itoa(tvoc, tvocChar, 10);
-      itoa(h2, h2Char, 10);
-      itoa(eth, ethChar, 10);
-    
-      mqttClient.publish("esp32/sensor/eco2", MQTT_QOS, false, eco2Char);
-      mqttClient.publish("esp32/sensor/tvoc", MQTT_QOS, false, tvocChar);
-      mqttClient.publish("esp32/sensor/h2", MQTT_QOS, false, h2Char);
-      mqttClient.publish("esp32/sensor/ethanol", MQTT_QOS, false, ethChar);
-      mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
-      mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
-      mqttClient.publish("esp32/sensor/dust", MQTT_QOS, false, dustChar);
-      
-      if(baselineReady)
-      {
-        char eco2BaselineChar[10];
-        char tvocBaselineChar[10];
-
-        itoa(eCO2_base, eco2BaselineChar, 10);
-        itoa(TVOC_base, tvocBaselineChar, 10);
-        
-        mqttClient.publish("esp32/sensor/eco2Baseline", MQTT_QOS, false, eco2BaselineChar);
-        mqttClient.publish("esp32/sensor/tvocBaseline", MQTT_QOS, false, tvocBaselineChar);
-
-        baselineReady = false;
-      }
-    }
-    else
-    {
-      mqttClient.publish("esp32", MQTT_QOS, false, "NOT READY");
-    }
-  }
-  
   ArduinoOTA.handle();
   ledloop();
   sensorloop();
