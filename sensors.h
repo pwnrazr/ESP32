@@ -35,10 +35,25 @@ void sensorSetup()
   sgp.setIAQBaseline(37644, 37704);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
 }
 
+union u_tag {
+   float density; 
+   byte density_byte[4];
+} u;
+
 void sensorloop()
 {
   EVERY_N_SECONDS(3)
   {
+    Wire.requestFrom(8, 4);
+    if(Wire.available() == 4)
+    {
+      for(byte i = 0; i <= 4; i++)
+      {
+        u.density_byte[i] = Wire.read();
+      }
+    }
+    Serial.println(u.density);
+    
     aht.getEvent(&rh, &temp);// populate temp and humidity objects with fresh data
 
     temperature = temp.temperature;
