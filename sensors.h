@@ -57,7 +57,6 @@ void sensorloop()
         u.density_byte[i] = Wire.read();
       }
     }
-    Serial.println(u.density);
     
     aht.getEvent(&rh, &temp);// populate temp and humidity objects with fresh data
 
