@@ -1,8 +1,11 @@
 #include <Adafruit_AHTX0.h>
 #include <Adafruit_SGP30.h>
+#include <Effortless_SPIFFS.h>
 
 Adafruit_AHTX0 aht;
 Adafruit_SGP30 sgp;
+
+eSPIFFS fileSystem;
 
 bool sensorsReady = false;  // For initial warmup of sensors
 byte sensorCount = 0;
@@ -26,6 +29,8 @@ void sendDustData();
 void sendAHT10Data();
 void sendSGP30Data();
 void sendSGP30Baseline();
+void spiffsSaveBaseline();
+void spiffsLoadBaseline();
 
 /* return absolute humidity [mg/m^3] with approximation formula
 * @param temperature [°C]
@@ -43,8 +48,7 @@ void sensorSetup()
   aht.begin();
   sgp.begin();
 
-  // If you have a baseline measurement from before you can assign it to start, to 'self-calibrate'
-  sgp.setIAQBaseline(37856, 38117);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
+  spiffsLoadBaseline();   // Load previously saved baseline
 
   sendAHT10Data();  // We call this on setup as SGP30 gets temperature and humidity compensation from this sensor
 }
@@ -69,6 +73,11 @@ void sensorloop()
   EVERY_N_SECONDS(60)   // Every 60 seconds because I have no clue
   {
     sendSGP30Baseline();
+  }
+
+  EVERY_N_MINUTES(60)   // Saves current baseline every hour as stated in SGP30 datasheet
+  {
+    spiffsSaveBaseline();
   }
 }
 
@@ -165,4 +174,25 @@ void sendDustData()
   
     mqttClient.publish("esp32/sensor/dust", MQTT_QOS, false, dustChar);
   }
+}
+
+void spiffsSaveBaseline()
+{
+  uint16_t eCO2_base_save, TVOC_base_save;
+  
+  sgp.getIAQBaseline(&eCO2_base_save, &TVOC_base_save);
+  
+  fileSystem.saveToFile("/eco2baseline.txt", eCO2_base_save);
+  fileSystem.saveToFile("/tvocbaseline.txt", TVOC_base_save);
+}
+
+void spiffsLoadBaseline()
+{
+  uint16_t eCO2_base_load, TVOC_base_load;
+  
+  fileSystem.openFromFile("/eco2baseline.txt", eCO2_base_load);
+  fileSystem.openFromFile("/tvocbaseline.txt", TVOC_base_load);
+  
+  // If you have a baseline measurement from before you can assign it to start, to 'self-calibrate'
+  sgp.setIAQBaseline(eCO2_base_load, TVOC_base_load);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
 }
