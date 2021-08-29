@@ -5,7 +5,7 @@ Adafruit_AHTX0 aht;
 Adafruit_SGP30 sgp;
 
 //  sgp30
-int eco2, tvoc, h2, eth;
+int eco2, tvoc;
 uint16_t TVOC_base, eCO2_base;
 byte sgpCount = 0;
 bool sgpReady = false;   // For 15 second initial warmup
@@ -71,11 +71,6 @@ void sensorloop()
     eco2 = sgp.eCO2;  // ppb
     tvoc = sgp.TVOC;  // ppm
 
-    sgp.IAQmeasureRaw();
-
-    h2 = sgp.rawH2;
-    eth = sgp.rawEthanol;
-
     sgpCount += 3;  // For 3 seconds
     if(sgpCount >= 30)
     {
@@ -94,8 +89,6 @@ void sendSensorData()
   {
     char eco2Char[10];
     char tvocChar[10];
-    char h2Char[10];
-    char ethChar[10];
     char temperatureChar[10];
     char humidityChar[10];
     char dustChar[10];
@@ -105,13 +98,9 @@ void sendSensorData()
     snprintf(dustChar, 10, "%.2f", u.density);
     itoa(eco2, eco2Char, 10);
     itoa(tvoc, tvocChar, 10);
-    itoa(h2, h2Char, 10);
-    itoa(eth, ethChar, 10);
   
     mqttClient.publish("esp32/sensor/eco2", MQTT_QOS, false, eco2Char);
     mqttClient.publish("esp32/sensor/tvoc", MQTT_QOS, false, tvocChar);
-    mqttClient.publish("esp32/sensor/h2", MQTT_QOS, false, h2Char);
-    mqttClient.publish("esp32/sensor/ethanol", MQTT_QOS, false, ethChar);
     mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
     mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
     mqttClient.publish("esp32/sensor/dust", MQTT_QOS, false, dustChar);
