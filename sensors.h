@@ -41,7 +41,7 @@ void sensorSetup()
   sgp.begin();
 
   // If you have a baseline measurement from before you can assign it to start, to 'self-calibrate'
-  sgp.setIAQBaseline(37644, 37704);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
+  sgp.setIAQBaseline(37856, 38117);  // Will vary for each sensor! (eCO2_baseline, TVOC_baseline)
 }
 
 void sensorloop()
