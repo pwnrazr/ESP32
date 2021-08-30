@@ -178,12 +178,22 @@ void sendDustData()
 
 void spiffsSaveBaseline()
 {
-  uint16_t eCO2_base_save, TVOC_base_save;
+  uint16_t eCO2_base_current, TVOC_base_current, eCO2_base_spiffs, TVOC_base_spiffs;
   
-  sgp.getIAQBaseline(&eCO2_base_save, &TVOC_base_save);
-  
-  fileSystem.saveToFile("/eco2baseline.txt", eCO2_base_save);
-  fileSystem.saveToFile("/tvocbaseline.txt", TVOC_base_save);
+  sgp.getIAQBaseline(&eCO2_base_current, &TVOC_base_current);
+
+  fileSystem.openFromFile("/eco2baseline.txt", eCO2_base_spiffs);
+  fileSystem.openFromFile("/tvocbaseline.txt", TVOC_base_spiffs);
+
+  if(eCO2_base_current != eCO2_base_spiffs)
+  {
+    fileSystem.saveToFile("/eco2baseline.txt", eCO2_base_current);
+  }
+
+  if(TVOC_base_current != TVOC_base_spiffs)
+  {
+    fileSystem.saveToFile("/tvocbaseline.txt", TVOC_base_current);
+  }
 }
 
 void spiffsLoadBaseline()
