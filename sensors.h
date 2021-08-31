@@ -60,7 +60,7 @@ void sensorloop()
     sendDustData();
   }
 
-  EVERY_N_SECONDS(8)    // Every 8 seconds because datasheet of AHT10 says 8 seconds for RH tau
+  EVERY_N_SECONDS(10)    // Every 10 seconds because datasheet of AHT10 8-30 sec sample rate
   { // AHT10 Temp and Humidity
     sendAHT10Data();
   }
