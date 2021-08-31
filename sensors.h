@@ -139,19 +139,22 @@ void sendAHT10Data()
 {
   aht.getEvent(&rh, &temp); // populate temp and humidity objects with fresh data
 
-  temperature = temp.temperature;
-  humidity = rh.relative_humidity;
+  if(rh.relative_humidity != 0)   // I keep getting readings of 0% RH which I doubt is correct.
+  {                               // So just don't set data if its 0%
+    temperature = temp.temperature;
+    humidity = rh.relative_humidity;
 
-  if(sensorsReady)
-  {
-    char temperatureChar[10];
-    char humidityChar[10];
-    
-    snprintf(temperatureChar, 10, "%.2f", temperature);
-    snprintf(humidityChar, 10, "%.2f", humidity);
-    
-    mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
-    mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
+    if(sensorsReady)
+    {
+      char temperatureChar[10];
+      char humidityChar[10];
+      
+      snprintf(temperatureChar, 10, "%.2f", temperature);
+      snprintf(humidityChar, 10, "%.2f", humidity);
+      
+      mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
+      mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
+    }
   }
 }
 
