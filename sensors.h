@@ -149,8 +149,10 @@ void sendAHT10Data()
       char temperatureChar[10];
       char humidityChar[10];
       
-      snprintf(temperatureChar, 10, "%.2f", temperature);
-      snprintf(humidityChar, 10, "%.2f", humidity);
+      //snprintf(temperatureChar, "%.2f", temperature);
+      //snprintf(humidityChar, "%.2f", humidity);
+      dtostrf(temperature, 4, 2, temperatureChar);
+      dtostrf(humidity, 4, 2,humidityChar);
       
       mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
       mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
@@ -173,7 +175,8 @@ void sendDustData()
   if(sensorsReady)
   {
     char dustChar[10];
-    snprintf(dustChar, 10, "%.2f", u.density);
+    //snprintf(dustChar, "%.2f", u.density);
+    dtostrf(u.density, 4, 2,dustChar);
   
     mqttClient.publish("esp32/sensor/dust", MQTT_QOS, false, dustChar);
   }
