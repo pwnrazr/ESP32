@@ -15,7 +15,6 @@ int eco2, tvoc;
 uint16_t TVOC_base, eCO2_base;
 
 // aht10
-sensors_event_t rh, temp;
 float humidity, temperature;
 
 // Dust Sensor
@@ -137,6 +136,7 @@ void sendSGP30Data()
 
 void sendAHT10Data()
 {
+  sensors_event_t rh, temp;
   aht.getEvent(&rh, &temp); // populate temp and humidity objects with fresh data
 
   if(rh.relative_humidity != 0)   // I keep getting readings of 0% RH which I doubt is correct.
