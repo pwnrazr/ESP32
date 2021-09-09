@@ -146,11 +146,11 @@ void sendAHT10Data()
 
     if(sensorsReady)
     {
-      char temperatureChar[16];
-      char humidityChar[16];
+      char temperatureChar[10];
+      char humidityChar[10];
       
-      snprintf(temperatureChar, 16, "%.2f", temperature);
-      snprintf(humidityChar, 16, "%.2f", humidity);
+      snprintf(temperatureChar, 10, "%.2f", temperature);
+      snprintf(humidityChar, 10, "%.2f", humidity);
       
       mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
       mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
