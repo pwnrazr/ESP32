@@ -27,7 +27,6 @@ union u_tag {
 void sendDustData();
 void sendSHT31Data();
 void sendSGP30Data();
-void sendSGP30Baseline();
 void spiffsSaveBaseline();
 void spiffsLoadBaseline();
 
@@ -68,32 +67,10 @@ void sensorloop()
   { // SGP30 eCO2 and TVOC
     sendSGP30Data();
   }
-  
-  EVERY_N_SECONDS(60)   // Every 60 seconds because I have no clue
-  {
-    sendSGP30Baseline();
-  }
 
   EVERY_N_MINUTES(60)   // Saves current baseline every hour as stated in SGP30 datasheet
   {
     spiffsSaveBaseline();
-  }
-}
-
-void sendSGP30Baseline()
-{
-  sgp.getIAQBaseline(&eCO2_base, &TVOC_base);
-  
-  char eco2BaselineChar[10];
-  char tvocBaselineChar[10];
-
-  itoa(eCO2_base, eco2BaselineChar, 10);
-  itoa(TVOC_base, tvocBaselineChar, 10);
-  
-  if(sensorsReady)
-  {
-    mqttClient.publish("esp32/sensor/eco2Baseline", MQTT_QOS, false, eco2BaselineChar);
-    mqttClient.publish("esp32/sensor/tvocBaseline", MQTT_QOS, false, tvocBaselineChar);
   }
 }
 
@@ -187,11 +164,19 @@ void spiffsSaveBaseline()
 
   if(eCO2_base_current != eCO2_base_spiffs)
   {
+    char eco2BaselineChar[10];
+    itoa(eCO2_base_current, eco2BaselineChar, 10);
+    mqttClient.publish("esp32/sensor/eco2Baseline", MQTT_QOS, false, eco2BaselineChar);
+    
     fileSystem.saveToFile("/eco2baseline.txt", eCO2_base_current);
   }
 
   if(TVOC_base_current != TVOC_base_spiffs)
   {
+    char tvocBaselineChar[10];
+    itoa(TVOC_base_current, tvocBaselineChar, 10);
+    mqttClient.publish("esp32/sensor/tvocBaseline", MQTT_QOS, false, tvocBaselineChar);
+    
     fileSystem.saveToFile("/tvocbaseline.txt", TVOC_base_current);
   }
 }
