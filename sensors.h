@@ -58,7 +58,7 @@ void sensorloop()
     sendDustData();
   }
 
-  EVERY_N_SECONDS(10)    // Every 10 seconds because datasheet of SHT31 8-30 sec sample rate
+  EVERY_N_SECONDS(8)    // Every 8 seconds because datasheet of SHT31 8-30 sec sample rate
   { // SHT31 Temp and Humidity
     sendSHT31Data();
   }
