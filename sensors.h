@@ -136,27 +136,21 @@ void sendSGP30Data()
 
 void sendSHT31Data()
 {
-  float t = sht31.readTemperature();
-  float h = sht31.readHumidity();
-  
-  if(h != 0)   // I keep getting readings of 0% RH which I doubt is correct.
-  {            // So just don't set data if its 0%
-    temperature = t;
-    humidity = h;
+  temperature = sht31.readTemperature();
+  humidity = sht31.readHumidity();
 
-    if(sensorsReady)
-    {
-      char temperatureChar[10];
-      char humidityChar[10];
-      
-      //snprintf(temperatureChar, "%.2f", temperature);
-      //snprintf(humidityChar, "%.2f", humidity);
-      dtostrf(temperature, 4, 2, temperatureChar);
-      dtostrf(humidity, 4, 2, humidityChar);
-      
-      mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
-      mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
-    }
+  if(sensorsReady)
+  {
+    char temperatureChar[10];
+    char humidityChar[10];
+    
+    //snprintf(temperatureChar, "%.2f", temperature);
+    //snprintf(humidityChar, "%.2f", humidity);
+    dtostrf(temperature, 4, 2, temperatureChar);
+    dtostrf(humidity, 4, 2, humidityChar);
+    
+    mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
+    mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
   }
 }
 
