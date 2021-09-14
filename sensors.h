@@ -1,8 +1,8 @@
-#include <Adafruit_AHTX0.h>
+#include "Adafruit_SHT31.h"
 #include <Adafruit_SGP30.h>
 #include <Effortless_SPIFFS.h>
 
-Adafruit_AHTX0 aht;
+Adafruit_SHT31 sht31 = Adafruit_SHT31();
 Adafruit_SGP30 sgp;
 
 eSPIFFS fileSystem;
@@ -14,7 +14,7 @@ byte sensorCount = 0;
 int eco2, tvoc;
 uint16_t TVOC_base, eCO2_base;
 
-// aht10
+// sht31
 float humidity, temperature;
 
 // Dust Sensor
@@ -25,7 +25,7 @@ union u_tag {
 } u;
 
 void sendDustData();
-void sendAHT10Data();
+void sendSHT31Data();
 void sendSGP30Data();
 void sendSGP30Baseline();
 void spiffsSaveBaseline();
@@ -44,12 +44,12 @@ uint32_t getAbsoluteHumidity(float temperature, float humidity) {
 
 void sensorSetup()
 {
-  aht.begin();
+  sht31.begin(0x44);
   sgp.begin();
 
   spiffsLoadBaseline();   // Load previously saved baseline
 
-  sendAHT10Data();  // We call this on setup as SGP30 gets temperature and humidity compensation from this sensor
+  sendSHT31Data();  // We call this on setup as SGP30 gets temperature and humidity compensation from this sensor
 }
 
 void sensorloop()
@@ -59,9 +59,9 @@ void sensorloop()
     sendDustData();
   }
 
-  EVERY_N_SECONDS(10)    // Every 10 seconds because datasheet of AHT10 8-30 sec sample rate
-  { // AHT10 Temp and Humidity
-    sendAHT10Data();
+  EVERY_N_SECONDS(10)    // Every 10 seconds because datasheet of SHT31 8-30 sec sample rate
+  { // SHT31 Temp and Humidity
+    sendSHT31Data();
   }
 
   EVERY_N_SECONDS(1)    // Every 1 second because datasheet says 1HZ sampling rate is best
@@ -134,15 +134,15 @@ void sendSGP30Data()
   }
 }
 
-void sendAHT10Data()
+void sendSHT31Data()
 {
-  sensors_event_t rh, temp;
-  aht.getEvent(&rh, &temp); // populate temp and humidity objects with fresh data
-
-  if(rh.relative_humidity != 0)   // I keep getting readings of 0% RH which I doubt is correct.
-  {                               // So just don't set data if its 0%
-    temperature = temp.temperature;
-    humidity = rh.relative_humidity;
+  float t = sht31.readTemperature();
+  float h = sht31.readHumidity();
+  
+  if(h != 0)   // I keep getting readings of 0% RH which I doubt is correct.
+  {            // So just don't set data if its 0%
+    temperature = t;
+    humidity = h;
 
     if(sensorsReady)
     {
@@ -152,7 +152,7 @@ void sendAHT10Data()
       //snprintf(temperatureChar, "%.2f", temperature);
       //snprintf(humidityChar, "%.2f", humidity);
       dtostrf(temperature, 4, 2, temperatureChar);
-      dtostrf(humidity, 4, 2,humidityChar);
+      dtostrf(humidity, 4, 2, humidityChar);
       
       mqttClient.publish("esp32/sensor/temperature", MQTT_QOS, false, temperatureChar);
       mqttClient.publish("esp32/sensor/humidity", MQTT_QOS, false, humidityChar);
